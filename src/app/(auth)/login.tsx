@@ -22,31 +22,7 @@ const LoginScreen = () => {
   const [fadeAnim] = useState(new Animated.Value(0)); // For fade animation
   const [loading, setLoading] = useState(false);
 
-  async function signInWithEmail() {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-    if (error) Alert.alert(error.message);
-    setLoading(false);
-  }
 
-  async function signUpWithEmail() {
-    setLoading(true);
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
-    if (error) Alert.alert(error.message);
-    if (!session)
-      Alert.alert("Please check your inbox for email verification!");
-    setLoading(false);
-  }
-  // Animation on mount
   React.useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -63,22 +39,35 @@ const LoginScreen = () => {
     }
     try {
       setLoading(true);
-      const {error} = await supabase.auth.signInWithPassword({
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
       });
+      if (error) Alert.alert(error.message);
+      if (!session)
+        Alert.alert("Please check your inbox for email verification!");
 
-      if (error) {
-        Alert.alert("Login failed", error.message);
-      }
+      // Update the corresponding record in the profiles table
+      const userProfile = {
+        id: session?.user.id,
+        username: session?.user.email,
+        name: "",
+        image: "",
+        bio: "",
+      };
+      const { data, error: profileError } = await supabase
+        .from("profiles")
+        .update([userProfile]);
+      if (profileError) console.error(profileError);
     } catch (error) {
-      console.error("Error during login:", error);
-      Alert.alert("An error occurred during login. Please try again.");
-      
+      console.error("Error during sign in:", error);
+      Alert.alert("An error occurred during sign in. Please try again.");
     } finally {
       setLoading(false);
     }
-    
   };
 
   return (

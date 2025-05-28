@@ -38,6 +38,19 @@ const SignUpScreen = () => {
       if (error) Alert.alert(error.message);
       if (!session)
         Alert.alert("Please check your inbox for email verification!");
+
+      // Insert a new record into the profiles table
+      const userProfile = {
+        id: session?.user.id,
+        username: session?.user.email,
+        name: "",
+        image: "",
+        bio: "",
+      };
+      const { data, error: profileError } = await supabase
+        .from("profiles")
+        .insert([userProfile]);
+      if (profileError) console.error(profileError);
     } catch (error) {
       console.error("Error during sign up:", error);
       Alert.alert("An error occurred during sign up. Please try again.");
@@ -110,7 +123,6 @@ const SignUpScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-
 
         {/* Forgot Password */}
         <TouchableOpacity className="mb-6">
