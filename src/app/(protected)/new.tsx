@@ -11,6 +11,8 @@ import {
 import React, { useState } from "react";
 import { Feather, MaterialIcons } from "@expo/vector-icons"; // For icons (install with npm install @expo/vector-icons)
 import { SafeAreaView } from "react-native-safe-area-context";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/providers/AuthProvider";
 
 export default function NewPostScreen() {
   const textInputRef = React.createRef<TextInput>();
@@ -28,6 +30,18 @@ export default function NewPostScreen() {
   const handleTextChange = (text: string) => {
     setThreadText(text);
   };
+
+  const {user} = useAuth();
+  const onSubmit = async () => {
+    if(!threadText || !user) return;
+
+    const {data, error} = await supabase.from('posts').insert({content: threadText, user_id: user.id});
+
+    if (error) {
+      console.error("Error creating post:", error);
+    }
+    setThreadText(""); // Reset input after successfully submit the post
+  }
 
   return (
     <SafeAreaView
@@ -95,7 +109,7 @@ export default function NewPostScreen() {
         </View>
         <View className="mt-auto">
           <TouchableOpacity
-            onPress={() => console.log("post: ", threadText)}
+            onPress={onSubmit}
             className="bg-white p-4 self-end rounded-full"
           >
             <Text>Post</Text>
