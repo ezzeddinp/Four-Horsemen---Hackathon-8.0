@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import { useRouter } from "expo-router";
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -21,8 +21,8 @@ export default function Splash() {
   }, []);
 
   return (
-    <View className="flex-1 bg-blue-500 justify-center items-center">
-      <Text className="text-white text-4xl font-bold">🔥 Splash Screen</Text>
+    <View className="flex-1 bg-[#F2EDFE] justify-center items-center">
+      <Image source={require('assets/medbay-splash.png')} className="text-white text-4xl font-bold" />
     </View>
   );
 }
