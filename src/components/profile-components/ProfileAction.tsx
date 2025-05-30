@@ -18,7 +18,7 @@ const ProfileActions = ({ isEditing, loading, error, toggleEdit, handleSave }: P
           onPress={toggleEdit}
           className={`py-3 px-6 rounded-lg ${isEditing ? "bg-gray-600" : "bg-blue-600"}`}
         >
-          <Text className="text-white font-semibold">{isEditing ? "Cancel" : "Edit Profile"}</Text>
+          <Text className="text-white font-semibold">{isEditing ? "Batal" : "Edit Profil"}</Text>
         </TouchableOpacity>
 
         {isEditing && (
@@ -30,7 +30,7 @@ const ProfileActions = ({ isEditing, loading, error, toggleEdit, handleSave }: P
             {loading ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
-              <Text className="text-white font-semibold">Save Changes</Text>
+              <Text className="text-white font-semibold">Simpan Perubahan</Text>
             )}
           </TouchableOpacity>
         )}
@@ -40,7 +40,7 @@ const ProfileActions = ({ isEditing, loading, error, toggleEdit, handleSave }: P
             onPress={() => supabase.auth.signOut()}
             className="py-3 px-6 rounded-lg bg-red-600"
           >
-            <Text className="text-white font-semibold">Sign Out</Text>
+            <Text className="text-white font-semibold">Keluar</Text>
           </TouchableOpacity>
         )}
       </View>

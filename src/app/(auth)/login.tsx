@@ -50,7 +50,7 @@ const LoginScreen = () => {
       if (!session)
         Alert.alert("Please check your inbox for email verification!");
 
-      // Update the corresponding record in the profiles table
+      // Update the corresponding record in the pasien table
       const userProfile = {
         id: session?.user.id,
         username: session?.user.email,
@@ -59,7 +59,7 @@ const LoginScreen = () => {
         bio: "",
       };
       const { data, error: profileError } = await supabase
-        .from("profiles")
+        .from("pasien")
         .update([userProfile]);
       if (profileError) console.error(profileError);
     } catch (error) {
@@ -78,7 +78,7 @@ const LoginScreen = () => {
       {/* Animated Logo or Title */}
       <Animated.View style={{ opacity: fadeAnim }}>
         <Text className="text-white text-4xl font-bold mb-6 tracking-widest">
-          Thread
+          MedBay
         </Text>
       </Animated.View>
 

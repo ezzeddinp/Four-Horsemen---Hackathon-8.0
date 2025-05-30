@@ -1,22 +1,29 @@
-export type User = {
-    id: string;
-    username: string;
-    name: string;
-    image: string;
-    bio: string;
-}
+// Pasien.ts
+export type Pasien = {
+  id: string;
+  email: string;
+  nama_lengkap: string;
+  nomor_telepon: string;
+  alamat: string;
+  nik: string;
+  avatar_url?: string;
+};
 
-export type Post = {
-    id: string;
-    title: string;
-    content: string;
-    createdAt: string
+// Dokter.ts
+export type Dokter = {
+  id: string;
+  nama_lengkap: string;
+  spesialis: string;
+  sertifikat: string;
+  keahlian: string
+  avatar_url:string
+};
 
-    user_id: string;
-    user: User;
-
-    parent_id: string | null;
-    parent: Post | null;
-
-    replies: Post[];
-}
+// RumahSakit.ts
+export type RumahSakit = {
+  id: string;
+  nama: string;
+  alamat: string;
+  telepon: string;
+  logo_url?: string;
+};

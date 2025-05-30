@@ -1,61 +1,76 @@
-import { FlatList } from "react-native";
-import PostListItem from "@/components/PostListItem";
-import { Link } from "expo-router";
+import { FlatList, Text, View, Image, TouchableOpacity } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { useEffect, useState } from "react";
-import { Post } from "@/types";
+import { useRouter } from "expo-router";
 
-export default function Page() {
-  const [posts, setPosts] = useState<Post[]>([]);
+interface Doctor {
+  id: string;
+  nama_dokter: string;
+  keahlian: string;
+  sertifikat: string;
+  id_rumah_sakit: string;
+  avatar_url?: string;
+  jadwal: string;
+}
 
-  const fetchPosts = async () => {
-    const { data: postsData, error: postsError } = await supabase
-      .from("posts")
-      .select("*, user:profiles(*)")
-      .order("created_at", { ascending: false })
-      .limit(10);
+export default function DokterList() {
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const router = useRouter();
 
-    if (postsError) {
-      console.error("Error fetching posts:", postsError);
+  const fetchDoctors = async () => {
+    const { data, error } = await supabase
+      .from("dokter")
+      .select("*")
+      .order("sertifikat", { ascending: false });
+
+    if (error) {
+      console.error("❌ Gagal fetch dokter:", error.message);
       return;
     }
-    setPosts(postsData as Post[]);
+
+    setDoctors(data || []);
   };
 
-  // Ambil data post saat komponen pertama kali dimuat + udh realtime
   useEffect(() => {
-    fetchPosts();
-
-    const channel = supabase
-      .channel("realtime-posts")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "posts",
-        },
-        (payload) => {
-          console.log("Realtime payload:", payload);
-          fetchPosts(); // Ambil ulang semua post
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    fetchDoctors();
   }, []);
 
+  const renderDoctor = ({ item }: { item: Doctor }) => (
+    <View className="bg-white/5 p-4 mb-3 rounded-xl flex-row items-center">
+      <Image
+        source={{ uri: item.avatar_url || "https://via.placeholder.com/64" }}
+        className="w-16 h-16 rounded-full mr-4"
+      />
+      <View className="flex-1">
+        <Text className="text-white text-lg font-bold">
+          {item.nama_dokter}
+        </Text>
+        <Text className="text-gray-400 text-sm mb-1">
+          Spesialis: <Text className="text-indigo-400">{item.keahlian}</Text>
+        </Text>
+        <Text className="text-gray-500 text-xs italic">
+          Sertifikat: {item.sertifikat}
+        </Text>
+      </View>
+      <TouchableOpacity
+        className="bg-indigo-600 px-4 py-2 rounded-lg"
+        onPress={() => router.push(`/booking?doctorId=${item.id}`)}
+      >
+        <Text className="text-white text-sm font-semibold">Booking</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
-    <FlatList
-      data={posts}
-      renderItem={({ item }) => <PostListItem post={item} />}
-      ListHeaderComponent={() => (
-        <Link href="/new" className="text-blue-500 text-center text-3xl">
-          New Post
-        </Link>
-      )}
-    />
+    <View className="flex-1 bg-black px-4 pt-8">
+      <Text className="text-white text-3xl font-bold mb-6 text-center">
+        Daftar Dokter
+      </Text>
+      <FlatList
+        data={doctors}
+        renderItem={renderDoctor}
+        keyExtractor={(item) => item.id}
+      />
+    </View>
   );
 }

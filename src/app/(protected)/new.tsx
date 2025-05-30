@@ -41,7 +41,7 @@ export default function NewPostScreen() {
       if (!user) return;
 
       const { data, error } = await supabase
-        .from("profiles")
+        .from("pasien")
         .select("username, avatar_url")
         .eq("id", user.id)
         .single();

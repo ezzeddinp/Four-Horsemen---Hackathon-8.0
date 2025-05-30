@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 import { ActivityIndicator } from 'react-native';
 import { View } from 'react-native';
 // import { useQuery } from '@tanstack/react-query';
-// import { getProfileById } from '@/services/profiles';
+// import { getProfileById } from '@/services/pasien';
 // import { Tables } from '@/types/database.types';
 
 // File ini sbg state management autentikasi user
@@ -14,7 +14,7 @@ import { View } from 'react-native';
 type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
-//   profile: Tables<'profiles'> | null;
+//   profile: Tables<'pasien'> | null;
 };
 
 const AuthContext = createContext<AuthContextType>({

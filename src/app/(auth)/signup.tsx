@@ -4,112 +4,137 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Animated,
-  Easing,
   Keyboard,
+  Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient"; // Install with npm install expo-linear-gradient
+import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
-import { Alert, StyleSheet } from "react-native";
 import { supabase } from "@/lib/supabase";
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nama, setNama] = useState("");
+  const [telepon, setTelepon] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [nik, setNik] = useState("");
   const [isSecureEntry, setIsSecureEntry] = useState(true);
-  const [fadeAnim] = useState(new Animated.Value(0)); // For fade animation
   const [loading, setLoading] = useState(false);
 
-  const handleSignUp = async () => {
-    if (!email || !password) {
-      Alert.alert("Please fill in all fields.");
-      return;
-    }
-    try {
-      setLoading(true);
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-      });
-      if (error) Alert.alert(error.message);
-      if (!session)
-        Alert.alert("Please check your inbox for email verification!");
+  const validateInputs = () => {
+    const nikRegex = /^\d{16}$/;
+    const teleponRegex = /^(08|\+628)\d{7,12}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      // Insert a new record into the profiles table
-      const userProfile = {
-        id: session?.user.id,
-        username: session?.user.email,
-        name: "",
-        image: "",
-        bio: "",
-      };
-      const { data, error: profileError } = await supabase
-        .from("profiles")
-        .insert([userProfile]);
-      if (profileError) console.error(profileError);
-    } catch (error) {
-      console.error("Error during sign up:", error);
-      Alert.alert("An error occurred during sign up. Please try again.");
+    if (!nama || !email || !password || !telepon || !alamat || !nik) {
+      Alert.alert("Validasi Gagal", "Semua field wajib diisi.");
+      return false;
+    }
+
+    if (!emailRegex.test(email)) {
+      Alert.alert("Validasi Gagal", "Email tidak valid.");
+      return false;
+    }
+
+    if (!teleponRegex.test(telepon)) {
+      Alert.alert("Validasi Gagal", "Nomor telepon tidak valid.");
+      return false;
+    }
+
+    if (!nikRegex.test(nik)) {
+      Alert.alert("Validasi Gagal", "NIK harus 16 digit angka.");
+      return false;
+    }
+
+    if (password.length < 6) {
+      Alert.alert("Validasi Gagal", "Password minimal 6 karakter.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSignUp = async () => {
+    console.log("🟢 Tombol daftar ditekan");
+    if (!validateInputs()) return;
+
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      const user = data?.user;
+
+      if (!user) throw new Error("User tidak dibuat");
+
+      const { error: insertError } = await supabase.from("pasien").insert([
+        {
+          id: user.id,
+          nama_lengkap: nama,
+          email: user.email,
+          nomor_telepon: telepon,
+          alamat: alamat,
+          nik: nik,
+        },
+      ]);
+
+      if (insertError) throw insertError;
+
+      Alert.alert("Registrasi berhasil", "Cek email untuk verifikasi.");
+    } catch (error: any) {
+      console.error("❌ Error saat registrasi:", error);
+      Alert.alert("Gagal mendaftar", error.message || "Terjadi kesalahan.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Animation on mount
-  React.useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-      easing: Easing.out(Easing.ease),
-    }).start();
-  }, [fadeAnim]);
-
   return (
     <View
       className="flex-1 bg-black justify-center items-center p-4"
-      onTouchStart={() => Keyboard.dismiss()}
+      onTouchStart={Keyboard.dismiss}
     >
-      {/* Animated Logo or Title */}
-      <Animated.View style={{ opacity: fadeAnim }}>
-        <Text className="text-white text-4xl font-bold mb-6 tracking-widest">
-          Thread
-        </Text>
-      </Animated.View>
+      <Text className="text-white text-4xl font-bold mb-6 tracking-widest">
+        MedBay
+      </Text>
 
-      {/* SignUp Form Container */}
-      <View className="w-11/12 max-w-md bg-gray-900 p-6 rounded-xl shadow-lg">
-        {/* email Input */}
-        <View className="mb-4">
-          <Text className="text-gray-400 text-sm mb-1">email</Text>
-          <TextInput
-            className="text-white bg-gray-800 p-4 rounded-lg border border-gray-700 focus:border-blue-500"
-            placeholder="Enter your email"
-            placeholderTextColor="#8a8a8a"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-        </View>
+      <View className="w-full max-w-md bg-gray-900 p-6 rounded-xl">
+        {[
+          { label: "Nama Lengkap", value: nama, setter: setNama, placeholder: "Nama lengkap" },
+          { label: "Email", value: email, setter: setEmail, placeholder: "Email" },
+          { label: "Nomor Telepon", value: telepon, setter: setTelepon, placeholder: "08xxxx / +628xxx" },
+          { label: "Alamat", value: alamat, setter: setAlamat, placeholder: "Alamat rumah" },
+          { label: "NIK", value: nik, setter: setNik, placeholder: "16 digit" },
+        ].map(({ label, value, setter, placeholder }, idx) => (
+          <View className="mb-3" key={idx}>
+            <Text className="text-gray-400 text-sm mb-1">{label}</Text>
+            <TextInput
+              value={value}
+              onChangeText={setter}
+              placeholder={placeholder}
+              placeholderTextColor="#8a8a8a"
+              className="text-white bg-gray-800 p-4 rounded-lg border border-gray-700"
+            />
+          </View>
+        ))}
 
-        {/* Password Input */}
+        {/* Password */}
         <View className="mb-4">
           <Text className="text-gray-400 text-sm mb-1">Password</Text>
           <View className="relative">
             <TextInput
-              className="text-white bg-gray-800 p-4 rounded-lg border border-gray-700 focus:border-blue-500 pr-12"
-              placeholder="Enter your password"
+              className="text-white bg-gray-800 p-4 rounded-lg border border-gray-700 pr-12"
+              placeholder="Minimal 6 karakter"
               placeholderTextColor="#8a8a8a"
               secureTextEntry={isSecureEntry}
               value={password}
-              onChangeText={(text) => setPassword(text)}
-              autoCapitalize="none"
-              autoCorrect={false}
+              onChangeText={setPassword}
             />
             <TouchableOpacity
               className="absolute right-4 top-4"
@@ -124,32 +149,25 @@ const SignUpScreen = () => {
           </View>
         </View>
 
-        {/* Forgot Password */}
-        <TouchableOpacity className="mb-6">
-          <Text className="text-blue-400 text-sm text-right">
-            Forgot Password?
-          </Text>
+        {/* Sign Up Button */}
+        <TouchableOpacity onPress={handleSignUp} disabled={loading}>
+          <LinearGradient
+            colors={["#4B5EFC", "#A66BFF"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            className="p-4 rounded-lg mb-3"
+          >
+            <Text className="text-white font-bold text-lg text-center">
+              {loading ? "Mendaftar..." : "Daftar"}
+            </Text>
+          </LinearGradient>
         </TouchableOpacity>
 
-        {/* SignUp Button */}
-        <LinearGradient
-          colors={["#4B5EFC", "#A66BFF"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          className="p-4 rounded-lg"
-        >
-          <TouchableOpacity onPress={handleSignUp} className="items-center">
-            <Text className="text-white font-bold text-lg">SignUp</Text>
-          </TouchableOpacity>
-        </LinearGradient>
-
-        {/* Login Prompt */}
+        {/* Link to Login */}
         <View className="flex-row justify-center mt-4">
-          <Text className="text-gray-500 text-sm">
-            Already have an account?{" "}
-          </Text>
+          <Text className="text-gray-500 text-sm">Sudah punya akun? </Text>
           <Link href="/login" asChild>
-            <Text className="text-blue-400 text-sm font-semibold">Sign In</Text>
+            <Text className="text-blue-400 text-sm font-semibold">Masuk</Text>
           </Link>
         </View>
       </View>

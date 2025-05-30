@@ -8,7 +8,6 @@ interface ProfileAvatarProps {
 }
 
 const ProfileAvatar = ({ avatarUrl, onEdit, isEditing }: ProfileAvatarProps) => {
-    console.log('Avatar URL:', avatarUrl);
   return (
     <View className="items-center">
       {avatarUrl ? (
