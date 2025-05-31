@@ -238,7 +238,7 @@ export default function App() {
 
   return (
     <View className="flex-1 bg-[#F2F0EF]">
-      <View className="bg-[#A78DF8] rounded-b-[20px] px-6 pt-8 pb-6">
+      <View className="bg-[#A78DF8] rounded-b-[20px] px-6 pt-8">
         <View className="flex-row justify-between items-center mt-10">
           <View className="flex-row items-center gap-4">
             <View className="w-12 h-12 rounded-full bg-gray-300" />
