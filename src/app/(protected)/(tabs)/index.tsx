@@ -188,7 +188,7 @@ export default function App() {
         <View className="px-4 mt-6">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-black text-xl font-bold">Doctors</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/doctor")}>
               <Text className="text-indigo-500 text-sm font-medium">
                 View All
               </Text>

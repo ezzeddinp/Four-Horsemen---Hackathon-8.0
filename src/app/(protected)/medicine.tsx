@@ -7,8 +7,11 @@ import {
   FlatList,
   Image,
   Platform,
+  ScrollView,
 } from "react-native";
 import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Medicine {
   id: string;
@@ -97,32 +100,34 @@ const SeeMedicine1 = () => {
   const renderMedicineCard = useCallback(
     ({ item }: { item: Medicine }) => (
       <TouchableOpacity
-        className="bg-white rounded-2xl p-4 mb-4 shadow-sm"
+        className="bg-[#f2f0ef] p-3 rounded-xl flex-row items-center mb-4 shadow-sm border border-[#f3f4f6]"
         activeOpacity={0.7}
       >
-        <View className="flex-row items-center">
-          <Image
-            className="w-20 h-20 rounded-lg"
-            source={{ uri: item.image }}
-            resizeMode="cover"
-          />
-          <View className="ml-4 flex-1">
-            <Text className="text-lg font-semibold text-gray-800 mb-1">
+        <Image
+          className="w-[109px] h-[109px] rounded-xl"
+          source={{ uri: item.image }}
+          resizeMode="cover"
+        />
+        <View className="flex-1 ml-3">
+          <View className="flex-row justify-between items-center">
+            <Text className="text-[#1f2a37] text-base font-bold">
               {item.name}
             </Text>
-            <View className="flex-row items-center mb-2">
-              <Text className="text-sm text-gray-600 ml-2">{item.type}</Text>
-            </View>
-            <View className="flex-row items-center">
-              <Text className="text-sm text-gray-600 ml-2">
-                {item.manufacturer}
-              </Text>
-            </View>
-            <View className="flex-row items-center mt-2">
-              <Text className="text-base font-semibold text-purple-600">
-                {formatPrice(item.price)}
-              </Text>
-            </View>
+          </View>
+          <View className="h-[1px] bg-[#e5e7eb] my-2" />
+          <Text className="text-[#4b5563] text-sm font-semibold mb-1">
+            {item.type}
+          </Text>
+          <View className="flex-row items-center gap-1 mb-1">
+            <Ionicons name="business-outline" size={14} color="#4b5563" />
+            <Text className="text-[#4b5563] text-sm flex-1">
+              {item.manufacturer}
+            </Text>
+          </View>
+          <View className="flex-row items-center gap-2">
+            <Text className="text-[#A78DF8] text-base font-semibold">
+              {formatPrice(item.price)}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -144,101 +149,88 @@ const SeeMedicine1 = () => {
   );
 
   return (
-    <View className="flex-1 bg-gray-50 mt-20">
-      <View className="flex-1 p-4">
-        <View className="flex-row items-center mb-5">
-          <TouchableOpacity className="p-2" onPress={() => router.back()}>
-            <Text className="text-2xl text-gray-800">←</Text>
-          </TouchableOpacity>
-          <Text className="text-2xl font-bold ml-4 text-gray-800">
-            All Medicine
-          </Text>
-        </View>
+    <SafeAreaView className="flex-1 bg-[#f2f0ef]">
+      <View className="flex-1">
+        {/* Header */}
+        <View className="px-4 pt-4">
+          <View className="flex-row items-center justify-between mb-4">
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons name="arrow-back" size={24} color="#374151" />
+            </TouchableOpacity>
+            <Text className="text-[#374151] text-xl font-semibold">
+              All Medicine
+            </Text>
+            <View className="w-6" />
+          </View>
 
-        <View className="mb-5">
-          <View className="bg-white rounded-xl p-3 flex-row items-center shadow-sm">
+          {/* Search Bar */}
+          <View className="bg-[#f3f4f6] rounded-lg h-10 flex-row items-center px-4 mb-4">
+            <Ionicons name="search" size={20} color="#9ca3af" />
             <TextInput
-              className="flex-1 ml-2 text-base text-gray-600"
+              className="flex-1 ml-2 text-sm text-[#9ca3af]"
               placeholder="Search medicine..."
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholderTextColor="#999"
             />
           </View>
-        </View>
 
-        <View className="flex-row mb-5 bg-white rounded-xl p-1">
-          {categories.map((category) => (
-            <TouchableOpacity
-              key={category}
-              className={`flex-1 py-3 items-center rounded-lg ${
-                selectedCategory === category ? "bg-purple-600" : ""
-              }`}
-              onPress={() => setSelectedCategory(category)}
-            >
-              <Text
-                className={`text-sm ${
+          {/* Categories */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            className="mb-4"
+          >
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category}
+                onPress={() => setSelectedCategory(category)}
+                className={`mr-2 px-5 py-2 rounded-full ${
                   selectedCategory === category
-                    ? "text-white font-semibold"
-                    : "text-gray-600"
+                    ? "bg-[#A78DF8]"
+                    : "border border-[#A78DF8]"
                 }`}
               >
-                {category}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+                <Text
+                  className={`text-sm font-semibold ${
+                    selectedCategory === category
+                      ? "text-[#f2f0ef]"
+                      : "text-[#A78DF8]"
+                  }`}
+                >
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
 
-        <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-base font-semibold text-gray-800">
-            Found {filteredAndSortedMedicines.length} medicines
-          </Text>
-          <View className="flex-row items-center space-x-2">
-            <Text className="text-sm text-gray-600">Sort by:</Text>
+          {/* Results and Sort */}
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-[#1f2a37] text-base font-bold">
+              {filteredAndSortedMedicines.length} founds
+            </Text>
             <TouchableOpacity
-              className={`px-3 py-1.5 rounded-lg ${
-                sortOrder === "asc" ? "bg-purple-600" : "bg-gray-100"
-              }`}
-              onPress={() => setSortOrder("asc")}
+              className="flex-row items-center gap-1"
+              onPress={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
             >
-              <Text
-                className={`text-sm ${
-                  sortOrder === "asc" ? "text-white" : "text-gray-600"
-                }`}
-              >
-                Low to High
+              <Text className="text-[#6b7280] text-sm font-semibold">
+                {sortOrder === "asc" ? "Low to High" : "High to Low"}
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className={`px-3 py-1.5 rounded-lg ${
-                sortOrder === "desc" ? "bg-purple-600" : "bg-gray-100"
-              }`}
-              onPress={() => setSortOrder("desc")}
-            >
-              <Text
-                className={`text-sm ${
-                  sortOrder === "desc" ? "text-white" : "text-gray-600"
-                }`}
-              >
-                High to Low
-              </Text>
+              <Ionicons name="chevron-down" size={14} color="#6b7280" />
             </TouchableOpacity>
           </View>
         </View>
 
+        {/* Medicine Cards */}
         <FlatList
           data={filteredAndSortedMedicines}
           renderItem={renderMedicineCard}
           keyExtractor={keyExtractor}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={5}
           ListEmptyComponent={ListEmptyComponent}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
