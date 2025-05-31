@@ -2,6 +2,7 @@ import { FlatList, Text, View, Image, TouchableOpacity } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
+import ChatWithDoctorAI from "@/lib/ai-service";
 
 interface Doctor {
   id: string;
@@ -78,6 +79,8 @@ export default function DokterList() {
           Daftar Dokter
         </Text>
       </View>
+
+      <ChatWithDoctorAI />
 
       {/* Card-container dengan overlap ke bagian ungu */}
       <View className="flex-1 -mt-12 px-4">
