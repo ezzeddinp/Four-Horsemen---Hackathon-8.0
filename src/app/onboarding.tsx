@@ -8,8 +8,6 @@ import OnboardingBullets from "@/components/onboarding-components/OnboardingBull
 import OnboardingControls from "@/components/onboarding-components/OnboardingControls";
 import OnboardingGetStarted from "@/components/onboarding-components/OnboardingGetStarted";
 
-// Komponen ini digunakan untuk menampilkan halaman onboarding pada aplikasi
-
 const { width } = Dimensions.get("window");
 
 export default function OnboardingScreen() {
@@ -25,7 +23,7 @@ export default function OnboardingScreen() {
         index: nextIndex,
         animated: true,
       });
-    }, 2000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [currentIndex]);
@@ -77,16 +75,17 @@ export default function OnboardingScreen() {
           <OnboardingSlide
             icon={item.icon}
             title={item.title}
-            subtitle={item.subtitle}
             description={item.description}
             backgroundColor={item.backgroundColor}
           />
         )}
       />
+
       <OnboardingBullets
         currentIndex={currentIndex}
         totalSlides={onboardingUtils.length}
       />
+
       <OnboardingControls
         currentIndex={currentIndex}
         totalSlides={onboardingUtils.length}

@@ -15,13 +15,16 @@ const OnboardingControls = ({
   goToPrev,
   goToNext,
 }: OnboardingControlsProps) => {
+  // Jangan render tombol kalau di slide terakhir
+  if (currentIndex === totalSlides - 1) return null;
+
   return (
-    <View className="absolute bottom-24 w-full flex-row justify-center space-x-4 px-6">
+    <View className="absolute bottom-24 w-full flex-row justify-center space-x-4 gap-2 px-6">
       <TouchableOpacity
         onPress={goToPrev}
         disabled={currentIndex === 0}
-        className={`flex-row items-center px-5 py-3 rounded-xl ${
-          currentIndex === 0 ? 'bg-purple-300/50' : 'bg-purple-400'
+        className={`flex-row items-center px-16 py-6 rounded-xl ${
+          'bg-[#A78DF8]'
         }`}
       >
         <Ionicons name="chevron-back" size={20} color="#fff" />
@@ -30,10 +33,7 @@ const OnboardingControls = ({
 
       <TouchableOpacity
         onPress={goToNext}
-        disabled={currentIndex === totalSlides - 1}
-        className={`flex-row items-center px-5 py-3 rounded-xl ${
-          currentIndex === totalSlides - 1 ? 'bg-purple-300/50' : 'bg-purple-400'
-        }`}
+        className="flex-row items-center px-16 py-6 rounded-xl bg-[#A78DF8]"
       >
         <Text className="text-white mr-1 font-semibold">Next</Text>
         <Ionicons name="chevron-forward" size={20} color="#fff" />

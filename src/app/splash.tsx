@@ -22,7 +22,7 @@ export default function Splash() {
 
   return (
     <View className="flex-1 bg-[#F2EDFE] justify-center items-center">
-      <Image source={require('assets/medbay-splash.png')} className="text-white text-4xl font-bold" />
+      <Image source={require('assets/medbay-splash.png')} className="h-64 w-64" />
     </View>
   );
 }

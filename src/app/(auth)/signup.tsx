@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   Keyboard,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
 import { supabase } from "@/lib/supabase";
+import { Link } from "expo-router";
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
@@ -56,7 +56,6 @@ const SignUpScreen = () => {
   };
 
   const handleSignUp = async () => {
-    console.log("🟢 Tombol daftar ditekan");
     if (!validateInputs()) return;
 
     setLoading(true);
@@ -96,15 +95,15 @@ const SignUpScreen = () => {
   };
 
   return (
-    <View
-      className="flex-1 bg-black justify-center items-center p-4"
+    <SafeAreaView
+      className="flex-1 bg-[#F2EDFE] justify-start items-center p-4"
       onTouchStart={Keyboard.dismiss}
     >
-      <Text className="text-white text-4xl font-bold mb-6 tracking-widest">
-        MedBay
+      <Text className="text-black text-3xl font-semibold mb-6 tracking-widest">
+        Daftar
       </Text>
 
-      <View className="w-full max-w-md bg-gray-900 p-6 rounded-xl">
+      <View className="w-11/12 max-w-md p-6 rounded-xl">
         {[
           { label: "Nama Lengkap", value: nama, setter: setNama, placeholder: "Nama lengkap" },
           { label: "Email", value: email, setter: setEmail, placeholder: "Email" },
@@ -112,29 +111,30 @@ const SignUpScreen = () => {
           { label: "Alamat", value: alamat, setter: setAlamat, placeholder: "Alamat rumah" },
           { label: "NIK", value: nik, setter: setNik, placeholder: "16 digit" },
         ].map(({ label, value, setter, placeholder }, idx) => (
-          <View className="mb-3" key={idx}>
-            <Text className="text-gray-400 text-sm mb-1">{label}</Text>
+          <View className="mb-4" key={idx}>
+            <Text className="text-gray-500 text-md mb-1">{label}</Text>
             <TextInput
               value={value}
               onChangeText={setter}
               placeholder={placeholder}
               placeholderTextColor="#8a8a8a"
-              className="text-white bg-gray-800 p-4 rounded-lg border border-gray-700"
+              className="text-black border-b border-[#71717A] p-4 rounded-lg"
             />
           </View>
         ))}
 
         {/* Password */}
         <View className="mb-4">
-          <Text className="text-gray-400 text-sm mb-1">Password</Text>
+          <Text className="text-gray-500 text-md mb-1">Password</Text>
           <View className="relative">
             <TextInput
-              className="text-white bg-gray-800 p-4 rounded-lg border border-gray-700 pr-12"
+              className="text-black border-b border-[#71717A] p-4 rounded-lg pr-12"
               placeholder="Minimal 6 karakter"
               placeholderTextColor="#8a8a8a"
               secureTextEntry={isSecureEntry}
               value={password}
               onChangeText={setPassword}
+              autoCapitalize="none"
             />
             <TouchableOpacity
               className="absolute right-4 top-4"
@@ -149,29 +149,26 @@ const SignUpScreen = () => {
           </View>
         </View>
 
-        {/* Sign Up Button */}
-        <TouchableOpacity onPress={handleSignUp} disabled={loading}>
-          <LinearGradient
-            colors={["#4B5EFC", "#A66BFF"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            className="p-4 rounded-lg mb-3"
-          >
-            <Text className="text-white font-bold text-lg text-center">
-              {loading ? "Mendaftar..." : "Daftar"}
-            </Text>
-          </LinearGradient>
+        {/* Daftar Button */}
+        <TouchableOpacity
+          onPress={handleSignUp}
+          className="items-center bg-[#A78DF8] py-4 rounded-[8%] mt-4"
+          disabled={loading}
+        >
+          <Text className="text-white font-semibold text-lg">
+            {loading ? "Mendaftar..." : "Daftar"}
+          </Text>
         </TouchableOpacity>
 
         {/* Link to Login */}
         <View className="flex-row justify-center mt-4">
-          <Text className="text-gray-500 text-sm">Sudah punya akun? </Text>
-          <Link href="/login" asChild>
-            <Text className="text-blue-400 text-sm font-semibold">Masuk</Text>
+          <Text className="text-gray-500 text-md">Sudah punya akun? </Text>
+          <Link href="/login">
+            <Text className="text-[#A78DF8] text-md font-semibold">Masuk</Text>
           </Link>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
