@@ -1,7 +1,15 @@
 // App.tsx
 import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, ScrollView, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
+import {
+  FlatList,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase";
 
@@ -20,9 +28,21 @@ interface Doctor {
 }
 
 const medicineData = [
-  { id: 1, name: "Paracetamol 500mg", image: "https://via.placeholder.com/100x50" },
-  { id: 2, name: "Amoxicillin 500mg", image: "https://via.placeholder.com/100x50" },
-  { id: 3, name: "Ibuprofen 200mg", image: "https://via.placeholder.com/100x50" },
+  {
+    id: 1,
+    name: "Paracetamol 500mg",
+    image: "https://via.placeholder.com/100x50",
+  },
+  {
+    id: 2,
+    name: "Amoxicillin 500mg",
+    image: "https://via.placeholder.com/100x50",
+  },
+  {
+    id: 3,
+    name: "Ibuprofen 200mg",
+    image: "https://via.placeholder.com/100x50",
+  },
   { id: 4, name: "Aspirin 100mg", image: "https://via.placeholder.com/100x50" },
 ];
 
@@ -72,12 +92,16 @@ export default function App() {
           className="w-52 h-32 items-center justify-center rounded-lg bg-gray-200"
         />
         <View className="flex-col items-start mt-4">
-          <Text className="text-black text-lg font-bold">{item.nama_dokter}</Text>
+          <Text className="text-black text-lg font-bold">
+            {item.nama_dokter}
+          </Text>
           <Text className="text-gray-400 text-sm mt-1">
             Spesialis: <Text className="text-indigo-500">{item.keahlian}</Text>
           </Text>
           <View className="flex-row items-center mt-2">
-            <Text className="text-yellow-500 text-sm font-medium">★ {item.rating}</Text>
+            <Text className="text-yellow-500 text-sm font-medium">
+              ★ {item.rating}
+            </Text>
             <Text className="text-gray-400 text-sm ml-3">{item.distance}</Text>
           </View>
         </View>
@@ -85,7 +109,11 @@ export default function App() {
     </TouchableOpacity>
   );
 
-  const renderMedicine = ({ item }: { item: { id: number; name: string; image: string } }) => (
+  const renderMedicine = ({
+    item,
+  }: {
+    item: { id: number; name: string; image: string };
+  }) => (
     <View className="bg-white p-4 rounded-2xl w-[48%] mr-2">
       <Image
         source={{ uri: item.image }}
@@ -119,7 +147,7 @@ export default function App() {
 
   return (
     <View className="flex-1 bg-gray-100">
-      <View className="bg-[#A78DF8] rounded-b-[150px] px-4 pt-8 gap-6 pb-2">
+      <View className="bg-[#A78DF8] rounded-b-[20px] px-4 pt-8 gap-6 pb-4">
         <View className="flex-row justify-between items-center mb-4 mt-10">
           <View className="flex-row items-center gap-4">
             <Image className="h-24 w-24 rounded-full bg-gray-300" />
@@ -137,16 +165,21 @@ export default function App() {
             </TouchableOpacity>
           </View>
         </View>
-        <View className="bg-[#F2EDFE] rounded-2xl p-4 py-10">
+        <View className="bg-[#F2EDFE] rounded-xl p-4 py-10">
           <View className="flex-row items-center justify-between mb-2">
             <Text className="text-black text-xl font-bold">App Knowledge</Text>
             <TouchableOpacity className="bg-[#A78DF8] rounded-full px-3 py-2">
-              <Text className="text-white text-md font-semibold">Learn More</Text>
+              <Text className="text-white text-md font-semibold">
+                Learn More
+              </Text>
             </TouchableOpacity>
           </View>
           <Text className="text-black text-md">Progress</Text>
           <View className="w-full bg-white/30 h-2 rounded-full mt-1">
-            <View className="bg-purple-400 h-2 rounded-full" style={{ width: "20%" }} />
+            <View
+              className="bg-purple-400 h-2 rounded-full"
+              style={{ width: "20%" }}
+            />
           </View>
           <Text className="text-[#A78DF8] text-md mt-1">20%</Text>
         </View>
@@ -156,7 +189,9 @@ export default function App() {
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-black text-xl font-bold">Doctors</Text>
             <TouchableOpacity>
-              <Text className="text-indigo-500 text-sm font-medium">View All</Text>
+              <Text className="text-indigo-500 text-sm font-medium">
+                View All
+              </Text>
             </TouchableOpacity>
           </View>
           <FlatList
@@ -166,14 +201,20 @@ export default function App() {
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingRight: 16 }}
-            ListEmptyComponent={<Text className="text-gray-500 text-center">No doctors found</Text>}
+            ListEmptyComponent={
+              <Text className="text-gray-500 text-center">
+                No doctors found
+              </Text>
+            }
           />
         </View>
         <View className="px-4 mt-6">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-black text-xl font-bold">Medicine</Text>
-            <TouchableOpacity>
-              <Text className="text-indigo-500 text-sm font-medium">View All</Text>
+            <TouchableOpacity onPress={() => router.push("/medicine")}>
+              <Text className="text-indigo-500 text-sm font-medium">
+                View All
+              </Text>
             </TouchableOpacity>
           </View>
           <FlatList
