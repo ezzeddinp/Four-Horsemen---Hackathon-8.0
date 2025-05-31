@@ -176,7 +176,10 @@ export default function DoctorDetail() {
         </View>
 
         {/* Book Now Button */}
-        <TouchableOpacity className="bg-[#A78DF8] mt-8 py-4 rounded-full">
+        <TouchableOpacity
+          className="bg-[#A78DF8] mt-8 py-4 rounded-full"
+          onPress={() => router.push("/book")}
+        >
           <Text className="text-white text-lg font-semibold text-center">
             Book Now
           </Text>

@@ -13,7 +13,7 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-interface Medicine {
+interface MedicalEquipment {
   id: string;
   name: string;
   type: string;
@@ -22,66 +22,57 @@ interface Medicine {
   image: string;
 }
 
-const SeeMedicine1 = () => {
+const SeeEquipment = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const categories = ["All", "General", "Syrup", "Pill"];
+  const categories = ["All", "Monitoring", "Emergency", "Diagnostic"];
 
-  const medicines: Medicine[] = [
+  const equipment: MedicalEquipment[] = [
     {
-      id: "med_1",
-      name: "Paracetamol 500mg",
-      type: "Pill",
-      manufacturer: "PT Kimia Farma",
-      price: 15000,
+      id: "1",
+      name: "Termometer Digital",
+      type: "Monitoring",
+      manufacturer: "PT Medika",
+      price: 200000,
       image:
         "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
     },
     {
-      id: "med_2",
-      name: "Amoxicillin 500mg",
-      type: "Capsule",
-      manufacturer: "PT Sanbe Farma",
-      price: 25000,
+      id: "2",
+      name: "Timbangan Digital",
+      type: "Monitoring",
+      manufacturer: "PT Sehat",
+      price: 250000,
       image:
         "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
     },
     {
-      id: "med_3",
-      name: "Ibuprofen 200mg",
-      type: "Syrup",
-      manufacturer: "PT Combiphar",
-      price: 18000,
+      id: "3",
+      name: "Pulse Oximeter",
+      type: "Monitoring",
+      manufacturer: "PT Medikal",
+      price: 180000,
       image:
         "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
     },
     {
-      id: "med_4",
-      name: "Cetirizine 10mg Tablet",
-      type: "Pill",
-      manufacturer: "PT Kimia Farma",
-      price: 15000,
-      image:
-        "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
-    },
-    {
-      id: "med_5",
-      name: "Promag",
-      type: "Pill",
-      manufacturer: "PT Kalbe Farma",
-      price: 20000,
+      id: "4",
+      name: "First Aid Kit",
+      type: "Emergency",
+      manufacturer: "PT Safety",
+      price: 150000,
       image:
         "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
     },
   ];
 
-  const filteredAndSortedMedicines = medicines
-    .filter((medicine) => {
+  const filteredAndSortedEquipment = equipment
+    .filter((item) => {
       const matchesCategory =
-        selectedCategory === "All" || medicine.type === selectedCategory;
-      const matchesSearch = medicine.name
+        selectedCategory === "All" || item.type === selectedCategory;
+      const matchesSearch = item.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
@@ -97,12 +88,12 @@ const SeeMedicine1 = () => {
     return `Rp ${price.toLocaleString("id-ID")}`;
   };
 
-  const renderMedicineCard = useCallback(
-    ({ item }: { item: Medicine }) => (
+  const renderEquipmentCard = useCallback(
+    ({ item }: { item: MedicalEquipment }) => (
       <TouchableOpacity
         className="bg-[#f2f0ef] p-3 rounded-xl flex-row items-center mb-4 shadow-sm border border-[#f3f4f6]"
         activeOpacity={0.7}
-        onPress={() => router.push(`/medicine/${item.id}`)}
+        onPress={() => router.push(`/equipment/${item.id}`)}
       >
         <Image
           className="w-[109px] h-[109px] rounded-xl"
@@ -136,13 +127,13 @@ const SeeMedicine1 = () => {
     []
   );
 
-  const keyExtractor = useCallback((item: Medicine) => item.id, []);
+  const keyExtractor = useCallback((item: MedicalEquipment) => item.id, []);
 
   const ListEmptyComponent = useCallback(
     () => (
       <View className="flex-1 justify-center items-center p-5">
         <Text className="text-base text-gray-600 text-center">
-          No medicines found. Try adjusting your search or filters.
+          No equipment found. Try adjusting your search or filters.
         </Text>
       </View>
     ),
@@ -159,7 +150,7 @@ const SeeMedicine1 = () => {
               <Ionicons name="arrow-back" size={24} color="#374151" />
             </TouchableOpacity>
             <Text className="text-[#374151] text-xl font-semibold">
-              All Medicine
+              All Equipment
             </Text>
             <View className="w-6" />
           </View>
@@ -169,7 +160,7 @@ const SeeMedicine1 = () => {
             <Ionicons name="search" size={20} color="#9ca3af" />
             <TextInput
               className="flex-1 ml-2 text-sm text-[#9ca3af]"
-              placeholder="Search medicine..."
+              placeholder="Search equipment..."
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
@@ -207,7 +198,7 @@ const SeeMedicine1 = () => {
           {/* Results and Sort */}
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-[#1f2a37] text-base font-bold">
-              {filteredAndSortedMedicines.length} founds
+              {filteredAndSortedEquipment.length} founds
             </Text>
             <TouchableOpacity
               className="flex-row items-center gap-1"
@@ -221,10 +212,10 @@ const SeeMedicine1 = () => {
           </View>
         </View>
 
-        {/* Medicine Cards */}
+        {/* Equipment Cards */}
         <FlatList
-          data={filteredAndSortedMedicines}
-          renderItem={renderMedicineCard}
+          data={filteredAndSortedEquipment}
+          renderItem={renderEquipmentCard}
           keyExtractor={keyExtractor}
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
@@ -235,4 +226,4 @@ const SeeMedicine1 = () => {
   );
 };
 
-export default SeeMedicine1;
+export default SeeEquipment;

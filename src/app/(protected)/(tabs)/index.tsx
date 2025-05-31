@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase";
+import { useCart } from "@/providers/CartProvider";
 
 interface Doctor {
   id: string;
@@ -42,7 +43,7 @@ interface MedicalEquipment {
 
 const medicineData = [
   {
-    id: 1,
+    id: "med_1",
     name: "Paracetamol 500mg",
     price: 12000,
     pharmacy: "Apotek Sehat Jaya",
@@ -50,7 +51,7 @@ const medicineData = [
       "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
   },
   {
-    id: 2,
+    id: "med_2",
     name: "Amoxicillin 500mg",
     price: 32000,
     pharmacy: "Apotek Sentosa",
@@ -58,7 +59,7 @@ const medicineData = [
       "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
   },
   {
-    id: 3,
+    id: "med_3",
     name: "Ibuprofen 200mg",
     price: 18000,
     pharmacy: "RS Harapan Bunda",
@@ -66,7 +67,7 @@ const medicineData = [
       "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
   },
   {
-    id: 4,
+    id: "med_4",
     name: "Cetirizine 10mg Tablet",
     price: 15000,
     pharmacy: "Apotek Kimia Farma",
@@ -77,7 +78,7 @@ const medicineData = [
 
 const medicalEquipmentData: MedicalEquipment[] = [
   {
-    id: "1",
+    id: "equip_1",
     name: "Termometer Digital",
     type: "Temperature",
     price: 200000,
@@ -85,7 +86,7 @@ const medicalEquipmentData: MedicalEquipment[] = [
       "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
   },
   {
-    id: "2",
+    id: "equip_2",
     name: "Timbangan Digital",
     type: "Monitoring",
     price: 250000,
@@ -93,7 +94,7 @@ const medicalEquipmentData: MedicalEquipment[] = [
       "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
   },
   {
-    id: "3",
+    id: "equip_3",
     name: "Pulse Oximeter",
     type: "Monitoring",
     price: 180000,
@@ -101,7 +102,7 @@ const medicalEquipmentData: MedicalEquipment[] = [
       "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
   },
   {
-    id: "4",
+    id: "equip_4",
     name: "First Aid Kit",
     type: "Emergency",
     price: 150000,
@@ -115,6 +116,7 @@ export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { getTotalItems, addToCart } = useCart();
 
   const fetchDoctors = async () => {
     try {
@@ -146,76 +148,150 @@ export default function App() {
   }, []);
 
   const renderDoctor = ({ item }: { item: Doctor }) => (
-    <TouchableOpacity
-      className="bg-white rounded-2xl w-[165px] h-[205px] mr-4 shadow-sm"
-      onPress={() => router.push(`/doctor/${item.id}`)}
-    >
-      <Image
-        source={{
-          uri:
-            item.avatar_url ||
-            "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZG9jdG9yfGVufDB8fDB8fHww",
-        }}
-        className="w-[141px] h-[94px] rounded-xl mx-3 mt-3"
-      />
-      <View className="px-3 mt-2">
-        <Text className="text-[#3B4453] text-sm font-medium">
-          {item.nama_dokter}
-        </Text>
-        <Text className="text-gray-500 text-xs mt-1">{item.keahlian}</Text>
-        <View className="flex-row items-center mt-4">
-          <View className="bg-[#A78DF8]/30 rounded-md px-2 py-1 flex-row items-center">
-            <Ionicons name="star" size={16} color="#A78DF8" />
-            <Text className="text-[#A78DF8] text-xs ml-1">{item.rating}</Text>
-          </View>
-          <View className="flex-row items-center ml-4">
-            <Ionicons name="location" size={14} color="#AFAFAF" />
-            <Text className="text-[#AFAFAF] text-xs ml-1">{item.distance}</Text>
+    <View className="mr-4 mb-2">
+      <TouchableOpacity
+        className="bg-white rounded-2xl w-[165px] h-[205px]"
+        onPress={() => router.push(`/doctor/${item.id}`)}
+      >
+        <View className="p-3">
+          <Image
+            source={
+              item.avatar_url
+                ? { uri: item.avatar_url }
+                : require("assets/Profile_avatar_placeholder_large.png")
+            }
+            className="w-full h-[94px] rounded-xl"
+            style={{ resizeMode: "cover" }}
+          />
+          <View className="mt-3">
+            <Text
+              className="text-[#3B4453] text-sm font-semibold"
+              numberOfLines={1}
+            >
+              {item.nama_dokter}
+            </Text>
+            <Text className="text-gray-500 text-xs mt-1" numberOfLines={1}>
+              {item.keahlian}
+            </Text>
+            <View className="flex-row items-center justify-between mt-3">
+              <View className="bg-[#A78DF8]/15 rounded-md px-2 py-1 flex-row items-center">
+                <Ionicons name="star" size={12} color="#A78DF8" />
+                <Text className="text-[#A78DF8] text-xs ml-1 font-medium">
+                  {item.rating}
+                </Text>
+              </View>
+              <View className="flex-row items-center flex-1 ml-2">
+                <Ionicons name="location" size={12} color="#AFAFAF" />
+                <Text className="text-[#AFAFAF] text-xs ml-1" numberOfLines={1}>
+                  {item.distance}
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </View>
   );
 
   const renderMedicine = ({ item }: { item: (typeof medicineData)[0] }) => (
-    <View className="bg-white rounded-2xl w-[165px] h-[204px] mr-5 shadow-sm">
-      <Image
-        source={{ uri: item.image }}
-        className="w-full h-[103px] rounded-t-2xl"
-      />
-      <View className="p-3">
-        <Text className="text-gray-500 text-xs">
-          Rp {item.price.toLocaleString("id-ID")}
-        </Text>
-        <Text className="text-black text-sm font-semibold mt-2">
-          {item.name}
-        </Text>
-        <View className="flex-row items-center mt-4">
-          <Ionicons name="location" size={14} color="#AFAFAF" />
-          <Text className="text-[#AFAFAF] text-xs ml-1">{item.pharmacy}</Text>
+    <View className="mr-4 mb-2">
+      <TouchableOpacity
+        className="bg-white rounded-2xl w-[165px] h-[204px] relative"
+        onPress={() => router.push(`/medicine/${item.id}`)}
+      >
+        <Image
+          source={{ uri: item.image }}
+          className="w-full h-[103px] rounded-t-2xl"
+          style={{ resizeMode: "cover" }}
+        />
+        {/* Quick Add Button */}
+        <TouchableOpacity
+          className="absolute top-2 right-2 bg-[#A78DF8] rounded-full p-1.5"
+          onPress={(e) => {
+            e.stopPropagation();
+            addToCart({
+              id: item.id,
+              name: item.name,
+              price: item.price,
+              image: item.image,
+              type: "medicine",
+            });
+          }}
+        >
+          <Ionicons name="add" size={16} color="white" />
+        </TouchableOpacity>
+        <View className="p-3">
+          <Text className="text-[#A78DF8] text-xs font-semibold">
+            Rp {item.price.toLocaleString("id-ID")}
+          </Text>
+          <Text
+            className="text-black text-sm font-semibold mt-2"
+            numberOfLines={2}
+          >
+            {item.name}
+          </Text>
+          <View className="flex-row items-center mt-2">
+            <Ionicons name="location" size={12} color="#AFAFAF" />
+            <Text
+              className="text-[#AFAFAF] text-xs ml-1 flex-1"
+              numberOfLines={1}
+            >
+              {item.pharmacy}
+            </Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 
   const renderMedicalEquipment = ({ item }: { item: MedicalEquipment }) => (
-    <View className="bg-white rounded-2xl w-[165px] h-[204px] mr-5 shadow-sm">
-      <Image
-        source={{ uri: item.image }}
-        className="w-full h-[103px] rounded-t-2xl"
-      />
-      <View className="p-3">
-        <Text className="text-gray-500 text-xs">
-          Rp {item.price.toLocaleString("id-ID")}
-        </Text>
-        <Text className="text-black text-sm font-semibold mt-2">
-          {item.name}
-        </Text>
-        <View className="flex-row items-center mt-4">
-          <Ionicons name="location" size={14} color="#AFAFAF" />
-          <Text className="text-[#AFAFAF] text-xs ml-1">Apotek Sehat Jaya</Text>
+    <View className="mr-4 mb-2">
+      <TouchableOpacity
+        className="bg-white rounded-2xl w-[165px] h-[204px] relative"
+        onPress={() => router.push(`/equipment/${item.id}`)}
+      >
+        <Image
+          source={{ uri: item.image }}
+          className="w-full h-[103px] rounded-t-2xl"
+          style={{ resizeMode: "cover" }}
+        />
+        {/* Quick Add Button */}
+        <TouchableOpacity
+          className="absolute top-2 right-2 bg-[#A78DF8] rounded-full p-1.5"
+          onPress={(e) => {
+            e.stopPropagation();
+            addToCart({
+              id: item.id,
+              name: item.name,
+              price: item.price,
+              image: item.image,
+              type: "equipment",
+            });
+          }}
+        >
+          <Ionicons name="add" size={16} color="white" />
+        </TouchableOpacity>
+        <View className="p-3">
+          <Text className="text-[#A78DF8] text-xs font-semibold">
+            Rp {item.price.toLocaleString("id-ID")}
+          </Text>
+          <Text
+            className="text-black text-sm font-semibold mt-2"
+            numberOfLines={2}
+          >
+            {item.name}
+          </Text>
+          <View className="flex-row items-center mt-2">
+            <Ionicons name="location" size={12} color="#AFAFAF" />
+            <Text
+              className="text-[#AFAFAF] text-xs ml-1 flex-1"
+              numberOfLines={1}
+            >
+              Apotek Sehat Jaya
+            </Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 
@@ -256,11 +332,18 @@ export default function App() {
             </View>
           </View>
           <View className="flex-row items-center gap-4">
-            <TouchableOpacity>
+            <TouchableOpacity
+              className="relative"
+              onPress={() => router.push("/cart")}
+            >
               <FontAwesome6 name="cart-shopping" size={20} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <MaterialIcons name="notifications" size={24} color="white" />
+              {getTotalItems() > 0 && (
+                <View className="absolute -top-2 -right-2 bg-red-500 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
+                  <Text className="text-white text-xs font-bold">
+                    {getTotalItems() > 99 ? "99+" : getTotalItems()}
+                  </Text>
+                </View>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -301,7 +384,7 @@ export default function App() {
             keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingRight: 16 }}
+            contentContainerStyle={{ paddingRight: 24, paddingBottom: 8 }}
             ListEmptyComponent={
               <Text className="text-gray-500 text-center">
                 No doctors found
@@ -325,7 +408,7 @@ export default function App() {
             keyExtractor={(item) => item.id.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingRight: 16 }}
+            contentContainerStyle={{ paddingRight: 24, paddingBottom: 8 }}
           />
         </View>
 
@@ -334,7 +417,7 @@ export default function App() {
             <Text className="text-black text-lg font-semibold">
               Medical Equipment
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/equipment")}>
               <Text className="text-[#A78DF8] text-sm font-medium">
                 View All
               </Text>
@@ -346,7 +429,7 @@ export default function App() {
             keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingRight: 16 }}
+            contentContainerStyle={{ paddingRight: 24, paddingBottom: 8 }}
           />
         </View>
       </ScrollView>
