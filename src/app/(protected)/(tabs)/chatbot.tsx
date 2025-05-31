@@ -1,8 +1,20 @@
 import * as React from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
 
 const Chatbot = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.replace("/Chatbot-start");
+    }, 2000); // 2 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <SafeAreaView className="flex-1 bg-[#f2f0ef] h-[874px] w-full overflow-hidden">
       {/* Welcome Text */}
