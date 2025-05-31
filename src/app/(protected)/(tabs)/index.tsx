@@ -1,5 +1,5 @@
 // App.tsx
-import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome6, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
@@ -27,23 +27,82 @@ interface Doctor {
   distance?: string;
 }
 
+interface MedicalEquipment {
+  id: string;
+  name: string;
+  type: string;
+  price: number;
+  image: string;
+}
+
 const medicineData = [
   {
     id: 1,
     name: "Paracetamol 500mg",
-    image: "https://via.placeholder.com/100x50",
+    price: 12000,
+    pharmacy: "Apotek Sehat Jaya",
+    image:
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
   },
   {
     id: 2,
     name: "Amoxicillin 500mg",
-    image: "https://via.placeholder.com/100x50",
+    price: 32000,
+    pharmacy: "Apotek Sentosa",
+    image:
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
   },
   {
     id: 3,
     name: "Ibuprofen 200mg",
-    image: "https://via.placeholder.com/100x50",
+    price: 18000,
+    pharmacy: "RS Harapan Bunda",
+    image:
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
   },
-  { id: 4, name: "Aspirin 100mg", image: "https://via.placeholder.com/100x50" },
+  {
+    id: 4,
+    name: "Cetirizine 10mg Tablet",
+    price: 15000,
+    pharmacy: "Apotek Kimia Farma",
+    image:
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
+  },
+];
+
+const medicalEquipmentData: MedicalEquipment[] = [
+  {
+    id: "1",
+    name: "Termometer Digital",
+    type: "Temperature",
+    price: 200000,
+    image:
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
+  },
+  {
+    id: "2",
+    name: "Timbangan Digital",
+    type: "Monitoring",
+    price: 250000,
+    image:
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
+  },
+  {
+    id: "3",
+    name: "Pulse Oximeter",
+    type: "Monitoring",
+    price: 180000,
+    image:
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
+  },
+  {
+    id: "4",
+    name: "First Aid Kit",
+    type: "Emergency",
+    price: 150000,
+    image:
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
+  },
 ];
 
 export default function App() {
@@ -65,8 +124,8 @@ export default function App() {
 
       const enhancedDoctors = data.map((doctor) => ({
         ...doctor,
-        rating: 4.9, // Placeholder
-        distance: "1 km Away", // Placeholder
+        rating: 4.9,
+        distance: "1.1 Km Away",
       }));
       setDoctors(enhancedDoctors || []);
     } catch (err) {
@@ -83,49 +142,81 @@ export default function App() {
 
   const renderDoctor = ({ item }: { item: Doctor }) => (
     <TouchableOpacity
-      className="bg-white py-10 mr-4 rounded-2xl w-64"
+      className="bg-white rounded-2xl w-[165px] h-[205px] mr-4 shadow-sm"
       onPress={() => router.push(`/doctor/${item.id}`)}
     >
-      <View className="flex flex-col items-center justify-center">
-        <Image
-          source={{ uri: item.avatar_url || "https://via.placeholder.com/100" }}
-          className="w-52 h-32 items-center justify-center rounded-lg bg-gray-200"
-        />
-        <View className="flex-col items-start mt-4">
-          <Text className="text-black text-lg font-bold">
-            {item.nama_dokter}
-          </Text>
-          <Text className="text-gray-400 text-sm mt-1">
-            Spesialis: <Text className="text-indigo-500">{item.keahlian}</Text>
-          </Text>
-          <View className="flex-row items-center mt-2">
-            <Text className="text-yellow-500 text-sm font-medium">
-              ★ {item.rating}
-            </Text>
-            <Text className="text-gray-400 text-sm ml-3">{item.distance}</Text>
+      <Image
+        source={{
+          uri:
+            item.avatar_url ||
+            "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZG9jdG9yfGVufDB8fDB8fHww",
+        }}
+        className="w-[141px] h-[94px] rounded-xl mx-3 mt-3"
+      />
+      <View className="px-3 mt-2">
+        <Text className="text-[#3B4453] text-sm font-medium">
+          {item.nama_dokter}
+        </Text>
+        <Text className="text-gray-500 text-xs mt-1">{item.keahlian}</Text>
+        <View className="flex-row items-center mt-4">
+          <View className="bg-[#A78DF8]/30 rounded-md px-2 py-1 flex-row items-center">
+            <Ionicons name="star" size={16} color="#A78DF8" />
+            <Text className="text-[#A78DF8] text-xs ml-1">{item.rating}</Text>
+          </View>
+          <View className="flex-row items-center ml-4">
+            <Ionicons name="location" size={14} color="#AFAFAF" />
+            <Text className="text-[#AFAFAF] text-xs ml-1">{item.distance}</Text>
           </View>
         </View>
       </View>
     </TouchableOpacity>
   );
 
-  const renderMedicine = ({
-    item,
-  }: {
-    item: { id: number; name: string; image: string };
-  }) => (
-    <View className="bg-white p-4 rounded-2xl w-[48%] mr-2">
+  const renderMedicine = ({ item }: { item: (typeof medicineData)[0] }) => (
+    <View className="bg-white rounded-2xl w-[165px] h-[204px] mr-5 shadow-sm">
       <Image
         source={{ uri: item.image }}
-        className="w-full h-20 rounded-lg mb-3"
+        className="w-full h-[103px] rounded-t-2xl"
       />
-      <Text className="text-black text-base mt-2 font-medium">{item.name}</Text>
+      <View className="p-3">
+        <Text className="text-gray-500 text-xs">
+          Rp {item.price.toLocaleString("id-ID")}
+        </Text>
+        <Text className="text-black text-sm font-semibold mt-2">
+          {item.name}
+        </Text>
+        <View className="flex-row items-center mt-4">
+          <Ionicons name="location" size={14} color="#AFAFAF" />
+          <Text className="text-[#AFAFAF] text-xs ml-1">{item.pharmacy}</Text>
+        </View>
+      </View>
+    </View>
+  );
+
+  const renderMedicalEquipment = ({ item }: { item: MedicalEquipment }) => (
+    <View className="bg-white rounded-2xl w-[165px] h-[204px] mr-5 shadow-sm">
+      <Image
+        source={{ uri: item.image }}
+        className="w-full h-[103px] rounded-t-2xl"
+      />
+      <View className="p-3">
+        <Text className="text-gray-500 text-xs">
+          Rp {item.price.toLocaleString("id-ID")}
+        </Text>
+        <Text className="text-black text-sm font-semibold mt-2">
+          {item.name}
+        </Text>
+        <View className="flex-row items-center mt-4">
+          <Ionicons name="location" size={14} color="#AFAFAF" />
+          <Text className="text-[#AFAFAF] text-xs ml-1">Apotek Sehat Jaya</Text>
+        </View>
+      </View>
     </View>
   );
 
   if (loading) {
     return (
-      <View className="flex-1 bg-gray-100 justify-center items-center">
+      <View className="flex-1 bg-[#F2F0EF] justify-center items-center">
         <ActivityIndicator size="large" color="#A78DF8" />
       </View>
     );
@@ -133,7 +224,7 @@ export default function App() {
 
   if (error) {
     return (
-      <View className="flex-1 bg-gray-100 justify-center items-center">
+      <View className="flex-1 bg-[#F2F0EF] justify-center items-center">
         <Text className="text-red-500 text-lg">{error}</Text>
         <TouchableOpacity
           className="mt-4 bg-[#A78DF8] px-4 py-2 rounded-lg"
@@ -146,50 +237,52 @@ export default function App() {
   }
 
   return (
-    <View className="flex-1 bg-gray-100">
-      <View className="bg-[#A78DF8] rounded-b-[20px] px-4 pt-8 gap-6 pb-4">
-        <View className="flex-row justify-between items-center mb-4 mt-10">
+    <View className="flex-1 bg-[#F2F0EF]">
+      <View className="bg-[#A78DF8] rounded-b-[20px] px-6 pt-8 pb-6">
+        <View className="flex-row justify-between items-center mt-10">
           <View className="flex-row items-center gap-4">
-            <Image className="h-24 w-24 rounded-full bg-gray-300" />
-            <View className="flex-col">
-              <Text className="text-white text-xl font-semibold">Hi Billy</Text>
-              <Text className="text-white text-lg">How's your day today?</Text>
+            <View className="w-12 h-12 rounded-full bg-gray-300" />
+            <View>
+              <Text className="text-white text-base font-medium">Hi Billy</Text>
+              <Text className="text-white/80 text-sm">Welcome back!</Text>
             </View>
           </View>
-          <View className="flex-row flex items-center justify-center gap-2">
-            <TouchableOpacity className="mr-3">
+          <View className="flex-row items-center gap-4">
+            <TouchableOpacity>
               <FontAwesome6 name="cart-shopping" size={20} color="white" />
             </TouchableOpacity>
             <TouchableOpacity>
-              <MaterialIcons name="notifications" size={26} color="white" />
+              <MaterialIcons name="notifications" size={24} color="white" />
             </TouchableOpacity>
           </View>
         </View>
-        <View className="bg-[#F2EDFE] rounded-xl p-4 py-10">
+
+        <View className="bg-[#F2EDFE] rounded-xl p-4 mt-6 mb-6">
           <View className="flex-row items-center justify-between mb-2">
-            <Text className="text-black text-xl font-bold">App Knowledge</Text>
-            <TouchableOpacity className="bg-[#A78DF8] rounded-full px-3 py-2">
-              <Text className="text-white text-md font-semibold">
-                Learn More
-              </Text>
+            <Text className="text-black text-base font-semibold">
+              App Knowledge
+            </Text>
+            <TouchableOpacity className="bg-[#A78DF8] rounded-full px-3 py-1">
+              <Text className="text-white text-xs font-medium">Learn More</Text>
             </TouchableOpacity>
           </View>
-          <Text className="text-black text-md">Progress</Text>
+          <Text className="text-black text-sm">Progress</Text>
           <View className="w-full bg-white/30 h-2 rounded-full mt-1">
             <View
-              className="bg-purple-400 h-2 rounded-full"
+              className="bg-[#A78DF8] h-2 rounded-full"
               style={{ width: "20%" }}
             />
           </View>
-          <Text className="text-[#A78DF8] text-md mt-1">20%</Text>
+          <Text className="text-[#A78DF8] text-sm mt-1">20%</Text>
         </View>
       </View>
-      <ScrollView>
-        <View className="px-4 mt-6">
+
+      <ScrollView className="flex-1">
+        <View className="px-6 mt-6">
           <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-black text-xl font-bold">Doctors</Text>
+            <Text className="text-black text-lg font-semibold">Doctors</Text>
             <TouchableOpacity onPress={() => router.push("/doctor")}>
-              <Text className="text-indigo-500 text-sm font-medium">
+              <Text className="text-[#A78DF8] text-sm font-medium">
                 View All
               </Text>
             </TouchableOpacity>
@@ -208,11 +301,12 @@ export default function App() {
             }
           />
         </View>
-        <View className="px-4 mt-6">
+
+        <View className="px-6 mt-8">
           <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-black text-xl font-bold">Medicine</Text>
+            <Text className="text-black text-lg font-semibold">Medicine</Text>
             <TouchableOpacity onPress={() => router.push("/medicine")}>
-              <Text className="text-indigo-500 text-sm font-medium">
+              <Text className="text-[#A78DF8] text-sm font-medium">
                 View All
               </Text>
             </TouchableOpacity>
@@ -221,6 +315,27 @@ export default function App() {
             data={medicineData}
             renderItem={renderMedicine}
             keyExtractor={(item) => item.id.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingRight: 16 }}
+          />
+        </View>
+
+        <View className="px-6 mt-8 mb-6">
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-black text-lg font-semibold">
+              Medical Equipment
+            </Text>
+            <TouchableOpacity>
+              <Text className="text-[#A78DF8] text-sm font-medium">
+                View All
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={medicalEquipmentData}
+            renderItem={renderMedicalEquipment}
+            keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingRight: 16 }}
