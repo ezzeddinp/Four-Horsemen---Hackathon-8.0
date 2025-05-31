@@ -1,5 +1,10 @@
 // App.tsx
-import { FontAwesome6, MaterialIcons, Ionicons } from "@expo/vector-icons";
+import {
+  FontAwesome6,
+  MaterialIcons,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
@@ -241,7 +246,10 @@ export default function App() {
       <View className="bg-[#A78DF8] rounded-b-[20px] px-6 pt-8">
         <View className="flex-row justify-between items-center mt-10">
           <View className="flex-row items-center gap-4">
-            <View className="w-12 h-12 rounded-full bg-gray-300" />
+            <Image
+              source={require("assets/Profile_avatar_placeholder_large.png")}
+              className="w-12 h-12 rounded-full"
+            />
             <View>
               <Text className="text-white text-base font-medium">Hi Billy</Text>
               <Text className="text-white/80 text-sm">Welcome back!</Text>
@@ -259,12 +267,12 @@ export default function App() {
 
         <View className="bg-[#F2EDFE] rounded-xl p-4 mt-6 mb-6">
           <View className="flex-row items-center justify-between mb-2">
-            <Text className="text-black text-base font-semibold">
-              App Knowledge
-            </Text>
-            <TouchableOpacity className="bg-[#A78DF8] rounded-full px-3 py-1">
-              <Text className="text-white text-xs font-medium">Learn More</Text>
-            </TouchableOpacity>
+            <View className="flex-row items-center gap-2">
+              <MaterialCommunityIcons name="brain" size={24} color="#A78DF8" />
+              <Text className="text-black text-base font-semibold">
+                App Knowledge
+              </Text>
+            </View>
           </View>
           <Text className="text-black text-sm">Progress</Text>
           <View className="w-full bg-white/30 h-2 rounded-full mt-1">
