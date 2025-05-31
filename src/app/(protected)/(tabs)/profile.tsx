@@ -185,7 +185,7 @@ export default function PasienScreen() {
   }
 
   return (
-    <View className="flex-1 bg-gray-900" onTouchStart={() => Keyboard.dismiss()}>
+    <View className="flex-1 bg-[#F2F0EF]" onTouchStart={() => Keyboard.dismiss()}>
       <ProfileHeader />
       <View className="mx-4 -mt-20 bg-gray-800 rounded-3xl p-6 shadow-lg">
         <ProfileAvatar
