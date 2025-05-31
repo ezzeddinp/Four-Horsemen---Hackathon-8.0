@@ -160,9 +160,7 @@ const CartPage = () => {
           }`}
           disabled={cartItems.length === 0}
           onPress={() => {
-            // Handle checkout functionality
-            console.log("Processing checkout...");
-            router.push("/success");
+            router.push("/payment-method");
           }}
         >
           <Text className="text-white text-base font-bold">Checkout</Text>

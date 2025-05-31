@@ -118,6 +118,23 @@ export default function App() {
   const router = useRouter();
   const { getTotalItems, addToCart } = useCart();
 
+  // Track visited pages for App Knowledge progress
+  const NAV_PAGES = [
+    "home",
+    "doctor",
+    "medicine",
+    "equipment",
+    "cart",
+    "profile",
+  ];
+  const [visitedPages, setVisitedPages] = useState<string[]>(["home"]);
+  const progress = Math.round((visitedPages.length / NAV_PAGES.length) * 100);
+
+  // Helper to mark a page as visited
+  const markVisited = (page: string) => {
+    setVisitedPages((prev) => (prev.includes(page) ? prev : [...prev, page]));
+  };
+
   const fetchDoctors = async () => {
     try {
       setLoading(true);
@@ -145,6 +162,8 @@ export default function App() {
 
   useEffect(() => {
     fetchDoctors();
+    // Mark home as visited on mount
+    markVisited("home");
   }, []);
 
   const renderDoctor = ({ item }: { item: Doctor }) => (
@@ -322,10 +341,17 @@ export default function App() {
       <View className="bg-[#A78DF8] rounded-b-[20px] px-6 pt-8">
         <View className="flex-row justify-between items-center mt-10">
           <View className="flex-row items-center gap-4">
-            <Image
-              source={require("assets/Profile_avatar_placeholder_large.png")}
-              className="w-12 h-12 rounded-full"
-            />
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/profile");
+                markVisited("profile");
+              }}
+            >
+              <Image
+                source={require("assets/Profile_avatar_placeholder_large.png")}
+                className="w-12 h-12 rounded-full"
+              />
+            </TouchableOpacity>
             <View>
               <Text className="text-white text-base font-medium">Hi Billy</Text>
               <Text className="text-white/80 text-sm">Welcome back!</Text>
@@ -334,9 +360,12 @@ export default function App() {
           <View className="flex-row items-center gap-4">
             <TouchableOpacity
               className="relative"
-              onPress={() => router.push("/cart")}
+              onPress={() => {
+                router.push("/cart");
+                markVisited("cart");
+              }}
             >
-              <FontAwesome6 name="cart-shopping" size={20} color="white" />
+              <FontAwesome6 name="cart-shopping" size={24} color="white" />
               {getTotalItems() > 0 && (
                 <View className="absolute -top-2 -right-2 bg-red-500 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
                   <Text className="text-white text-xs font-bold">
@@ -361,10 +390,10 @@ export default function App() {
           <View className="w-full bg-white/30 h-2 rounded-full mt-1">
             <View
               className="bg-[#A78DF8] h-2 rounded-full"
-              style={{ width: "20%" }}
+              style={{ width: `${progress}%` }}
             />
           </View>
-          <Text className="text-[#A78DF8] text-sm mt-1">20%</Text>
+          <Text className="text-[#A78DF8] text-sm mt-1">{progress}%</Text>
         </View>
       </View>
 
@@ -372,7 +401,12 @@ export default function App() {
         <View className="px-6 mt-6">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-black text-lg font-semibold">Doctors</Text>
-            <TouchableOpacity onPress={() => router.push("/doctor")}>
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/doctor");
+                markVisited("doctor");
+              }}
+            >
               <Text className="text-[#A78DF8] text-sm font-medium">
                 View All
               </Text>
@@ -396,7 +430,12 @@ export default function App() {
         <View className="px-6 mt-8">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-black text-lg font-semibold">Medicine</Text>
-            <TouchableOpacity onPress={() => router.push("/medicine")}>
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/medicine");
+                markVisited("medicine");
+              }}
+            >
               <Text className="text-[#A78DF8] text-sm font-medium">
                 View All
               </Text>
@@ -405,7 +444,7 @@ export default function App() {
           <FlatList
             data={medicineData}
             renderItem={renderMedicine}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingRight: 24, paddingBottom: 8 }}
@@ -417,7 +456,12 @@ export default function App() {
             <Text className="text-black text-lg font-semibold">
               Medical Equipment
             </Text>
-            <TouchableOpacity onPress={() => router.push("/equipment")}>
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/equipment");
+                markVisited("equipment");
+              }}
+            >
               <Text className="text-[#A78DF8] text-sm font-medium">
                 View All
               </Text>

@@ -10,12 +10,30 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
+import highRiskKeywords from "@/lib/high_risk_keywords.json";
+
+// Dummy medicine and doctor data for demonstration
+const medicineSuggestion = {
+  id: "med_1",
+  name: "OBH Combi",
+  price: 20000,
+  image:
+    "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWVkaWNpbmV8ZW58MHx8MHx8fDA%3D",
+};
+const doctorSuggestion = {
+  id: "doc_1",
+  name: "Dr. David Patel",
+  specialization: "Cardiologist",
+  distance: "1.1 Km Away",
+  image: require("assets/Profile_avatar_placeholder_large.png"),
+};
 
 interface Message {
   id: number;
   text: string;
   isBot: boolean;
   timestamp: Date;
+  cardType?: "medicine" | "doctor";
 }
 
 const ChatbotStart = () => {
@@ -48,6 +66,20 @@ const ChatbotStart = () => {
         "Unintentional weight loss can be concerning and may indicate various conditions including hyperthyroidism, diabetes, depression, digestive disorders, or in some cases, more serious conditions like cancer. Other causes include stress, medications, or infections. If you've lost more than 5% of your body weight in 6-12 months without trying, please consult a healthcare provider promptly.",
     },
   ];
+
+  // Helper to scan for keywords
+  const containsHighRiskKeyword = (text: string) => {
+    return highRiskKeywords.keywords.some((kw) =>
+      text.toLowerCase().includes(kw.toLowerCase())
+    );
+  };
+
+  const containsPilekBatuk = (text: string) => {
+    return (
+      text.toLowerCase().includes("pilek") ||
+      text.toLowerCase().includes("batuk")
+    );
+  };
 
   const handleSuggestionPress = (suggestion: (typeof suggestions)[0]) => {
     // Add user message
@@ -86,6 +118,46 @@ const ChatbotStart = () => {
       timestamp: new Date(),
     };
 
+    // Check for special keywords
+    if (containsPilekBatuk(inputText)) {
+      // Show medicine card
+      setMessages((prev) => [
+        ...prev,
+        userMessage,
+        {
+          id: Date.now() + 1,
+          text: "Based on your symptoms, you may need this medicine:",
+          isBot: true,
+          timestamp: new Date(),
+          cardType: "medicine",
+        },
+      ]);
+      setInputText("");
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+      return;
+    }
+    if (containsHighRiskKeyword(inputText)) {
+      // Show doctor card
+      setMessages((prev) => [
+        ...prev,
+        userMessage,
+        {
+          id: Date.now() + 1,
+          text: "Your symptoms may require urgent attention. Please consult a specialist:",
+          isBot: true,
+          timestamp: new Date(),
+          cardType: "doctor",
+        },
+      ]);
+      setInputText("");
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+      return;
+    }
+
     // Simple bot response for custom messages
     setTimeout(() => {
       const botMessage: Message = {
@@ -104,6 +176,56 @@ const ChatbotStart = () => {
       }, 100);
     }, 1000);
   };
+
+  // Card renderers
+  const renderMedicineCard = () => (
+    <View className="bg-white rounded-xl p-4 mt-4 mb-2 flex-row items-center border border-[#A78DF8]">
+      <Image
+        source={{ uri: medicineSuggestion.image }}
+        className="w-[80px] h-[80px] rounded-xl"
+        resizeMode="cover"
+      />
+      <View className="ml-4 flex-1">
+        <Text className="text-[#1F2A37] text-base font-bold mb-1">
+          {medicineSuggestion.name}
+        </Text>
+        <Text className="text-[#A78DF8] text-sm font-semibold mb-2">
+          Rp {medicineSuggestion.price.toLocaleString("id-ID")}
+        </Text>
+        <TouchableOpacity
+          className="bg-[#A78DF8] rounded-full px-4 py-2 mt-2"
+          onPress={() => router.push(`/medicine/${medicineSuggestion.id}`)}
+        >
+          <Text className="text-white text-sm font-bold text-center">
+            Detail
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const renderDoctorCard = () => (
+    <View className="bg-white rounded-xl p-4 mt-4 mb-2 flex-row items-center border border-[#A78DF8]">
+      <Image
+        source={doctorSuggestion.image}
+        className="w-[80px] h-[80px] rounded-xl"
+        resizeMode="cover"
+      />
+      <View className="ml-4 flex-1">
+        <Text className="text-[#1F2A37] text-base font-bold mb-1">
+          {doctorSuggestion.name}
+        </Text>
+        <TouchableOpacity
+          className="bg-[#A78DF8] rounded-full px-4 py-2 mt-2"
+          onPress={() => router.push(`/doctor/${doctorSuggestion.id}`)}
+        >
+          <Text className="text-white text-sm font-bold text-center">
+            Detail
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-[#f2f0ef]">
@@ -134,26 +256,30 @@ const ChatbotStart = () => {
           {/* Chat Messages */}
           <View className="flex-1 mb-8">
             {messages.map((message) => (
-              <View
-                key={message.id}
-                className={`mb-4 ${
-                  message.isBot ? "items-start" : "items-end"
-                }`}
-              >
+              <React.Fragment key={message.id}>
                 <View
-                  className={`max-w-[80%] p-4 rounded-2xl shadow-sm ${
-                    message.isBot ? "bg-white" : "bg-[#a78df8]"
+                  className={`mb-4 ${
+                    message.isBot ? "items-start" : "items-end"
                   }`}
                 >
-                  <Text
-                    className={`text-base ${
-                      message.isBot ? "text-gray-800" : "text-white"
+                  <View
+                    className={`max-w-[80%] p-4 rounded-2xl shadow-sm ${
+                      message.isBot ? "bg-white" : "bg-[#a78df8]"
                     }`}
                   >
-                    {message.text}
-                  </Text>
+                    <Text
+                      className={`text-base ${
+                        message.isBot ? "text-gray-800" : "text-white"
+                      }`}
+                    >
+                      {message.text}
+                    </Text>
+                  </View>
                 </View>
-              </View>
+                {/* Render card if needed */}
+                {message.cardType === "medicine" && renderMedicineCard()}
+                {message.cardType === "doctor" && renderDoctorCard()}
+              </React.Fragment>
             ))}
           </View>
 
@@ -194,6 +320,8 @@ const ChatbotStart = () => {
                 value={inputText}
                 onChangeText={setInputText}
                 onSubmitEditing={handleSendMessage}
+                autoCorrect={false}
+                autoCapitalize="none"
               />
             </View>
           </View>

@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Test Appointment Fix",
+      "type": "shell",
+      "command": "npx expo doctor && echo '✅ Expo project health check passed!'",
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": []
+    }
+  ]
+}

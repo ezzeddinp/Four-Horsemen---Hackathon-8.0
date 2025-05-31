@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { View, FlatList, Dimensions } from "react-native";
 import { onboardingUtils } from "@/constants/OnboardingUtils";
 import { useRouter } from "expo-router";
+import { useAppState } from "@/providers/AppStateProvider";
 
 import OnboardingSlide from "@/components/onboarding-components/OnboardingSlide";
 import OnboardingBullets from "@/components/onboarding-components/OnboardingBullets";
@@ -14,6 +15,7 @@ export default function OnboardingScreen() {
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
+  const { markOnboardingComplete } = useAppState();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -33,14 +35,16 @@ export default function OnboardingScreen() {
     setCurrentIndex(slideIndex);
   };
 
-  const goToNext = () => {
+  const goToNext = async () => {
     if (currentIndex < onboardingUtils.length - 1) {
       flatListRef.current?.scrollToIndex({
         index: currentIndex + 1,
         animated: true,
       });
     } else {
-      router.replace("/login");
+      // Mark onboarding as completed before navigating
+      await markOnboardingComplete();
+      router.replace("/(auth)/login");
     }
   };
 

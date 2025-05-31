@@ -6,8 +6,11 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useAppointments } from "@/providers/AppointmentProvider";
+import BookingSuccessModal from "@/components/BookingSuccessModal";
+import RescheduleSuccessModal from "@/components/RescheduleSuccessModal";
 
 const getDaysInMonth = (month: number, year: number) => {
   return new Date(year, month + 1, 0).getDate();
@@ -40,6 +43,19 @@ const BookAppointment = () => {
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const { addAppointment, updateAppointment } = useAppointments();
+
+  // Get parameters from navigation
+  const params = useLocalSearchParams();
+  const mode = params.mode as string; // "reschedule" or "rebook"
+  const appointmentId = params.appointmentId
+    ? parseInt(params.appointmentId as string)
+    : null;
+  const doctorFromParams = params.doctor as string;
+  const specialtyFromParams = params.specialty as string;
+  const locationFromParams = params.location as string;
 
   const timeSlots = [
     ["09:00 AM", "09:30 AM", "10:00 AM"],
@@ -112,6 +128,70 @@ const BookAppointment = () => {
     )}-${String(day).padStart(2, "0")}`;
   };
 
+  const formatDateForDisplay = (dateString: string) => {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleDateString("en-US", options);
+  };
+
+  const handleBooking = () => {
+    if (!selectedDate || !selectedTime) return;
+
+    if (mode === "reschedule" && appointmentId) {
+      // Update existing appointment
+      updateAppointment(appointmentId, {
+        date: formatDateForDisplay(selectedDate),
+        time: selectedTime,
+      });
+
+      // Show reschedule success modal
+      setShowRescheduleModal(true);
+    } else {
+      // Create new appointment (default booking or re-book)
+      const doctor = doctorFromParams || "Dr. David Patel";
+      const specialty = specialtyFromParams || "General Practice";
+      const location = locationFromParams || "MedBay Clinic, USA";
+
+      const newAppointment = {
+        date: formatDateForDisplay(selectedDate),
+        time: selectedTime,
+        doctor: doctor,
+        specialty: specialty,
+        location: location,
+        status: "upcoming" as const,
+      };
+
+      // Add to appointments
+      addAppointment(newAppointment);
+
+      // Show success modal
+      setShowSuccessModal(true);
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    setShowRescheduleModal(false);
+    // Navigate back to appointments tab
+    router.push("/(protected)/(tabs)/appointment");
+  };
+
+  // Get header title based on mode
+  const getHeaderTitle = () => {
+    if (mode === "reschedule") return "Reschedule";
+    if (mode === "rebook") return "Re-Book Appointment";
+    return "Book Appointment";
+  };
+
+  // Get doctor name for display
+  const getDoctorName = () => {
+    return doctorFromParams || "Dr. David Patel";
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-[#F2F0EF]">
       {/* Header */}
@@ -121,7 +201,7 @@ const BookAppointment = () => {
             <Ionicons name="arrow-back" size={24} color="#374151" />
           </TouchableOpacity>
           <Text className="text-[#374151] text-xl font-semibold">
-            Book Appointment
+            {getHeaderTitle()}
           </Text>
         </View>
       </View>
@@ -233,15 +313,37 @@ const BookAppointment = () => {
             selectedDate && selectedTime ? "bg-[#A78DF8]" : "bg-gray-400"
           }`}
           disabled={!selectedDate || !selectedTime}
-          onPress={() => {
-            // Handle booking confirmation
-            console.log("Booking confirmed:", { selectedDate, selectedTime });
-            router.push("/success");
-          }}
+          onPress={handleBooking}
         >
           <Text className="text-white text-base font-bold">Confirm</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Success Modal */}
+      {selectedDate && selectedTime && (
+        <BookingSuccessModal
+          visible={showSuccessModal}
+          onClose={handleModalClose}
+          appointmentDetails={{
+            doctor: getDoctorName(),
+            date: formatDateForDisplay(selectedDate),
+            time: selectedTime,
+          }}
+        />
+      )}
+
+      {/* Reschedule Success Modal */}
+      {selectedDate && selectedTime && (
+        <RescheduleSuccessModal
+          visible={showRescheduleModal}
+          onClose={handleModalClose}
+          appointmentDetails={{
+            doctor: getDoctorName(),
+            date: formatDateForDisplay(selectedDate),
+            time: selectedTime,
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 };

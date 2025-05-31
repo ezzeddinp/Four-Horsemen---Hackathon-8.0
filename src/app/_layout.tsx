@@ -1,9 +1,12 @@
 import { AuthProvider } from "@/providers/AuthProvider";
 import { CartProvider } from "@/providers/CartProvider";
+import { AppointmentProvider } from "@/providers/AppointmentProvider";
+import { AppStateProvider } from "@/providers/AppStateProvider";
 import "../../global.css";
 import { ThemeProvider, DarkTheme } from "@react-navigation/native";
 import { Slot } from "expo-router";
 import React from "react";
+import { TransactionProvider } from "@/providers/TransactionProvider";
 
 const myTheme = {
   ...DarkTheme,
@@ -19,11 +22,17 @@ const myTheme = {
 export default function RootLayout() {
   return (
     <ThemeProvider value={myTheme}>
-      <AuthProvider>
-        <CartProvider>
-          <Slot />
-        </CartProvider>
-      </AuthProvider>
+      <AppStateProvider>
+        <AuthProvider>
+          <CartProvider>
+            <AppointmentProvider>
+              <TransactionProvider>
+                <Slot />
+              </TransactionProvider>
+            </AppointmentProvider>
+          </CartProvider>
+        </AuthProvider>
+      </AppStateProvider>
     </ThemeProvider>
   );
 }

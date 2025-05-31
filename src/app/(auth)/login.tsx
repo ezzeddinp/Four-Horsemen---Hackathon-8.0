@@ -27,6 +27,24 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
 
   React.useEffect(() => {
+    // Check if user is already authenticated when login screen loads
+    const checkAuthStatus = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        console.log(
+          "🔍 Login screen loaded but user already authenticated:",
+          user.email
+        );
+        console.log("🔄 This might explain the 'instant access' issue");
+      } else {
+        console.log("✅ Login screen loaded, no existing authentication");
+      }
+    };
+
+    checkAuthStatus();
+
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 1000,
@@ -65,40 +83,58 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     if (!validateFields()) {
-      Alert.alert("Please fill in all fields.");
+      Alert.alert("Validation Error", "Please fill in all fields correctly.");
       return;
     }
 
     try {
       setLoading(true);
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.signInWithPassword({
-        email: email,
+
+      // Sign in with email and password
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
         password: password,
       });
 
-      if (error) Alert.alert(error.message);
+      if (error) {
+        console.error("Login error:", error);
+        Alert.alert("Login Failed", error.message);
+        return;
+      }
 
-      // Update the corresponding record in the pasien table
-      const userProfile = {
-        id: session?.user.id,
-        nama_lengkap: "",
-        email: session?.user.email,
-        nomor_telepon: "",
-        alamat: "",
-        avatar_url: "",
-      };
-      const { error: profileError } = await supabase
+      if (!data.user) {
+        Alert.alert("Login Failed", "No user data received");
+        return;
+      }
+
+      // Check if user profile exists in pasien table
+      const { data: profileData, error: profileError } = await supabase
         .from("pasien")
-        .update([userProfile])
-        .eq("id", session?.user.id);
+        .select("*")
+        .eq("id", data.user.id)
+        .single();
 
-      if (profileError) console.error(profileError);
+      if (profileError) {
+        console.error("Profile check error:", profileError);
+        // If profile doesn't exist, user might need to complete registration
+        if (profileError.code === "PGRST116") {
+          Alert.alert(
+            "Profile Not Found",
+            "Please complete your registration by signing up again."
+          );
+          await supabase.auth.signOut();
+          return;
+        }
+      }
+
+      console.log("Login successful:", data.user.email);
+      // Navigation will be handled by AuthProvider
     } catch (error) {
-      console.error("Error during sign in:", error);
-      Alert.alert("An error occurred during sign in. Please try again.");
+      console.error("Unexpected error during login:", error);
+      Alert.alert(
+        "Login Error",
+        "An unexpected error occurred. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -161,7 +197,9 @@ const LoginScreen = () => {
             </TouchableOpacity>
           </View>
           {passwordError ? (
-            <Text className="text-red-500 text-md mb-2 mt-4">{passwordError}</Text>
+            <Text className="text-red-500 text-md mb-2 mt-4">
+              {passwordError}
+            </Text>
           ) : null}
         </View>
 
@@ -176,8 +214,11 @@ const LoginScreen = () => {
         <TouchableOpacity
           onPress={handleLogin}
           className="items-center bg-[#A78DF8] py-4 rounded-[8%] mt-4"
+          disabled={loading}
         >
-          <Text className="text-white font-semibold text-lg">Log in</Text>
+          <Text className="text-white font-semibold text-lg">
+            {loading ? "Logging in..." : "Log in"}
+          </Text>
         </TouchableOpacity>
 
         {/* Sign Up Prompt */}

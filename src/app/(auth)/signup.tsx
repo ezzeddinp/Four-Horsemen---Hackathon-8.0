@@ -61,17 +61,30 @@ const SignUpScreen = () => {
     setLoading(true);
 
     try {
+      // First, sign up the user
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: email.trim(),
         password,
+        options: {
+          data: {
+            full_name: nama,
+          },
+        },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Auth signup error:", error);
+        throw error;
+      }
 
       const user = data?.user;
+      if (!user) {
+        throw new Error("User creation failed - no user data received");
+      }
 
-      if (!user) throw new Error("User tidak dibuat");
+      console.log("User created:", user.id, user.email);
 
+      // Insert user profile into pasien table
       const { error: insertError } = await supabase.from("pasien").insert([
         {
           id: user.id,
@@ -83,12 +96,39 @@ const SignUpScreen = () => {
         },
       ]);
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error("Profile creation error:", insertError);
+        // If profile creation fails, we should sign out the user
+        await supabase.auth.signOut();
+        throw new Error(`Failed to create profile: ${insertError.message}`);
+      }
 
-      Alert.alert("Registrasi berhasil", "Cek email untuk verifikasi.");
+      console.log("Profile created successfully");
+
+      Alert.alert(
+        "Registration Successful",
+        "Please check your email for verification before logging in.",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              // Clear form
+              setNama("");
+              setEmail("");
+              setTelepon("");
+              setAlamat("");
+              setNik("");
+              setPassword("");
+            },
+          },
+        ]
+      );
     } catch (error: any) {
-      console.error("❌ Error saat registrasi:", error);
-      Alert.alert("Gagal mendaftar", error.message || "Terjadi kesalahan.");
+      console.error("❌ Registration error:", error);
+      Alert.alert(
+        "Registration Failed",
+        error.message || "An unexpected error occurred during registration."
+      );
     } finally {
       setLoading(false);
     }
@@ -105,10 +145,30 @@ const SignUpScreen = () => {
 
       <View className="w-11/12 max-w-md p-6 rounded-xl">
         {[
-          { label: "Nama Lengkap", value: nama, setter: setNama, placeholder: "Nama lengkap" },
-          { label: "Email", value: email, setter: setEmail, placeholder: "Email" },
-          { label: "Nomor Telepon", value: telepon, setter: setTelepon, placeholder: "08xxxx / +628xxx" },
-          { label: "Alamat", value: alamat, setter: setAlamat, placeholder: "Alamat rumah" },
+          {
+            label: "Nama Lengkap",
+            value: nama,
+            setter: setNama,
+            placeholder: "Nama lengkap",
+          },
+          {
+            label: "Email",
+            value: email,
+            setter: setEmail,
+            placeholder: "Email",
+          },
+          {
+            label: "Nomor Telepon",
+            value: telepon,
+            setter: setTelepon,
+            placeholder: "08xxxx / +628xxx",
+          },
+          {
+            label: "Alamat",
+            value: alamat,
+            setter: setAlamat,
+            placeholder: "Alamat rumah",
+          },
           { label: "NIK", value: nik, setter: setNik, placeholder: "16 digit" },
         ].map(({ label, value, setter, placeholder }, idx) => (
           <View className="mb-4" key={idx}>

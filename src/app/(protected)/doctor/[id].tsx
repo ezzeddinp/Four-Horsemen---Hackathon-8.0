@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase";
+import { useAppKnowledge } from "@/providers/AppKnowledgeProvider";
 
 interface Doctor {
   id: string;
@@ -32,6 +33,7 @@ export default function DoctorDetail() {
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { markVisited } = useAppKnowledge();
 
   const fetchDoctor = async () => {
     try {
@@ -153,9 +155,7 @@ export default function DoctorDetail() {
         <View className="mt-8">
           <Text className="text-black text-xl font-bold">Working Time</Text>
           <View className="bg-gray-50 p-4 rounded-xl mt-3">
-            <Text className="text-gray-600 text-base">
-              {doctor.jadwal || "Monday-Friday, 08:00 AM-18:00 PM"}
-            </Text>
+            <Text className="text-gray-600 text-base">09:00 AM - 17:30 PM</Text>
           </View>
         </View>
 
