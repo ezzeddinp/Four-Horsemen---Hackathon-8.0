@@ -9,14 +9,14 @@ const ChatbotStart = () => {
   return (
     <SafeAreaView className="flex-1 bg-[#f2f0ef]">
       {/* Back Button - Fixed Position */}
-      <TouchableOpacity 
+      <TouchableOpacity
         className="absolute top-12 left-4 z-50"
         onPress={() => router.replace("/(protected)/(tabs)/index.tsx")}
       >
-        <Image 
-          source={require("../../assets/Chatbot-startchat/arrow-left.svg")}
+        <Image
+          source={require("/Users/billy/codeOS/projects/Four-Horsemen---Hackathon-8.0/assets/Chatbot-startchat/arrow-left.png")}
           className="w-8 h-8"
-          style={{ tintColor: '#000000' }}
+          style={{ tintColor: "#000000" }}
           resizeMode="contain"
         />
       </TouchableOpacity>
@@ -36,7 +36,8 @@ const ChatbotStart = () => {
           {/* Bot Message */}
           <View className="bg-white rounded-2xl p-4 mb-4 max-w-[80%] shadow-sm">
             <Text className="text-gray-800 text-base">
-              Hello! I'm MedAI, your medical assistant. How can I help you today?
+              Hello! I'm MedAI, your medical assistant. How can I help you
+              today?
             </Text>
           </View>
         </View>
@@ -50,8 +51,8 @@ const ChatbotStart = () => {
               placeholderTextColor="#999"
             />
             <TouchableOpacity className="bg-[#7a76f1] p-3 rounded-full">
-              <Image 
-                source={require("../../assets/Chatbot-startchat/mynaui_send-solid.svg")}
+              <Image
+                source={require("/Users/billy/codeOS/projects/Four-Horsemen---Hackathon-8.0/assets/Chatbot-startchat/mynaui_send-solid.svg")}
                 className="w-6 h-6"
                 resizeMode="contain"
               />
@@ -63,18 +64,18 @@ const ChatbotStart = () => {
       {/* Navigation Bar */}
       <View className="bg-white h-[109px] shadow-lg shadow-[rgba(193,193,193,0.25)]">
         <View className="flex-row justify-center items-center h-full gap-10">
-          <Image 
-            source={require("../../assets/Chatbot-startchat/Frame 11.svg")}
+          <Image
+            source={require("/Users/billy/codeOS/projects/Four-Horsemen---Hackathon-8.0/assets/Chatbot-startchat/Frame 11.svg")}
             className="w-[30px] h-[30px]"
             resizeMode="contain"
           />
-          <Image 
-            source={require("../../assets/Chatbot-startchat/Rectangle 18053.svg")}
+          <Image
+            source={require("/Users/billy/codeOS/projects/Four-Horsemen---Hackathon-8.0/assets/Chatbot-startchat/Rectangle 18053.svg")}
             className="w-[50px] h-[50px]"
             resizeMode="contain"
           />
-          <Image 
-            source={require("../../assets/Chatbot-startchat/Rectangle 18053 (1).svg")}
+          <Image
+            source={require("/Users/billy/codeOS/projects/Four-Horsemen---Hackathon-8.0/assets/Chatbot-startchat/Rectangle 18053 (1).svg")}
             className="w-[30px] h-[30px]"
             resizeMode="contain"
           />
@@ -87,4 +88,3 @@ const ChatbotStart = () => {
 };
 
 export default ChatbotStart;
-                
