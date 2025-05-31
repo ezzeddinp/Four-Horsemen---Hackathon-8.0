@@ -22,6 +22,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Home",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <Octicons name="home" size={24} color={color} />
           ),

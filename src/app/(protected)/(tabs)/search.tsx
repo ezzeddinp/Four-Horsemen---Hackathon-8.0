@@ -1,7 +1,10 @@
-import { View, Text } from "react-native";
-import React from "react";
-import ChatWithDoctorAI from "@/lib/ai-service";
+import { View, Text } from 'react-native'
+import React from 'react'
 
 export default function SearchScreen() {
-  return <ChatWithDoctorAI />;
-}
+  return (
+    <View>
+      <Text>Search</Text>
+    </View>
+  )
+} 

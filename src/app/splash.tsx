@@ -15,14 +15,14 @@ export default function Splash() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace("/onboarding");
-    }, 2000);
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <View className="flex-1 bg-[#F2EDFE] justify-center items-center">
-      <Image source={require('assets/medbay-splash.png')} className="h-64 w-64" />
+    <View className="flex-1 bg-[#F2F0EF] justify-center items-center">
+      <Image source={require('assets/medbay-splash.png')} className="h-32 w-32" />
     </View>
   );
 }
