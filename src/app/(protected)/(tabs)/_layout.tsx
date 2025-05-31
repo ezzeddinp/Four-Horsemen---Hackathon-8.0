@@ -1,20 +1,21 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import Octicons from "react-native-vector-icons/Octicons";
-import Feather from "react-native-vector-icons/Octicons";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import Feather from "react-native-vector-icons/Feather";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
+        tabBarActiveTintColor: "#A78DF8",
+        tabBarInactiveTintColor: "#CACACA",
+        tabBarActiveBackgroundColor: "#A78DF859",
       
         tabBarStyle: {
-
-          height: 90, // Set the height of the tab bar to 60 pixels
-          padding: 20,
+          height: 100, // Set the height of the tab bar to 60 pixels
+          padding: 100,
         },
       }}
     >
@@ -24,25 +25,38 @@ export default function TabsLayout() {
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Octicons name="home" size={24} color={color} />
+            <MaterialCommunityIcons name="home" size={31} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="search"
+        name="chatbot"
         options={{
-          title: "Search",
+          title: "Chatbot",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Feather name="search" size={24} color={color} />
+            <MaterialCommunityIcons name="message-processing" size={24} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="notifications"
+        name="appointment"
         options={{
           title: "Notifications",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
-            <AntDesign name="hearto" size={24} color={color} />
+            <FontAwesome5 name="calendar-week" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="claim"
+        options={{
+          title: "Claim",
+          headerShown: false,
+
+          tabBarIcon: ({ color }) => (
+            <FontAwesome6 name="file-medical" size={24} color={color} />
           ),
         }}
       />
@@ -50,6 +64,7 @@ export default function TabsLayout() {
         name="profile"
         options={{
           title: "Profile",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome5 name="user" size={24} color={color} />
           ),

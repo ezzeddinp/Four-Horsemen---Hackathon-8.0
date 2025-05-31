@@ -81,7 +81,7 @@ export default function DokterList() {
       {/* <ChatWithDoctorAI /> */}
 
       {/* Card-container dengan overlap ke bagian ungu */}
-      <View className="flex-1 -mt-12 px-4">
+      <View className="flex-1 -mt-12 px-4 flex-row">
         <FlatList
           data={doctors}
           renderItem={renderDoctor}

@@ -88,7 +88,6 @@ const LoginScreen = () => {
         email: session?.user.email,
         nomor_telepon: "",
         alamat: "",
-        nik: "",
         avatar_url: "",
       };
       const { error: profileError } = await supabase
