@@ -8,9 +8,9 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import axios from "axios";
 import { supabase } from "@/lib/supabase";
 import ollama from "ollama";
+
 
 interface Doctor {
   id: string;
@@ -68,7 +68,7 @@ const ChatWithDoctorAI = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://192.168.x.x:11434/api/chat", {
+      const response = await ollama.chat({
         model: "deepseek-r1:1.5b",
         messages: [
           {
@@ -81,20 +81,16 @@ const ChatWithDoctorAI = () => {
             content: currentInput.trim(),
           },
         ],
-        stream: false, // HANYA GUNAKAN FALSE DI REACT NATIVE
+        stream: true,
       });
 
-      const aiResponse = response.data.message.content.trim();
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          text: aiResponse,
-          isUser: false,
-        },
-      ]);
-    } catch (err) {
+  
+      for await (const part of response){
+        const aiResponse = part.message.content;
+        setMessages((prevMessage) => [...prevMessage, { id: prevMessage.length + 1, text: aiResponse, isUser: false }]);
+        
+      }
+    } catch (err: any) {
       console.error("Error getting AI response:", err);
       setMessages((prev) => [
         ...prev,
@@ -104,6 +100,8 @@ const ChatWithDoctorAI = () => {
           isUser: false,
         },
       ]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -122,6 +120,7 @@ const ChatWithDoctorAI = () => {
 
     setLoading(true);
     try {
+
       const doctorList = await fetchDoctors();
 
       if (doctorList.length === 0) {
