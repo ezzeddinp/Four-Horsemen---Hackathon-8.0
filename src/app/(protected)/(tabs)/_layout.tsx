@@ -16,8 +16,6 @@ export default function TabsLayout() {
         tabBarStyle: {
           height: 100, // Set the height of the tab bar to 60 pixels
           padding: 100,
-          height: 90, // Set the height of the tab bar to 60 pixels
-          padding: 20,
         },
       }}
     >
