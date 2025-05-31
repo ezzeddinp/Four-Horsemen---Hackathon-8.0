@@ -14,7 +14,7 @@ export default function ProtectedLayout() {
     <Stack>
         <Stack.Screen name='(tabs)' options={{headerShown: false}} />
         <Stack.Screen name='new' options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
-        {/* <Stack.Screen name='login' options={{ presentation: 'modal', animation: 'slide_from_bottom' }} /> */}
+        <Stack.Screen name='[id]' options={{ headerShown: false, headerBackButtonDisplayMode: "minimal", }} />
     </Stack>
   )
 }
