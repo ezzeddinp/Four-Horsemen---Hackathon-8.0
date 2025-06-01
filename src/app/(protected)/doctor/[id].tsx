@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase";
-import { useAppKnowledge } from "@/providers/AppKnowledgeProvider";
 
 interface Doctor {
   id: string;
@@ -33,7 +32,6 @@ export default function DoctorDetail() {
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { markVisited } = useAppKnowledge();
 
   const fetchDoctor = async () => {
     try {
